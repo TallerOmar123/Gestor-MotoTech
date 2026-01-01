@@ -199,8 +199,11 @@
                         <td><small>{{ moto.get('moto') }}</small></td>
                         <td>{{ moto.get('km_actual') }}</td>
                         <td class="text-center">
-                            <a href="{{ url_for('descargar_reporte', placa=moto.get('placa')) }}"
-                                class="btn btn-sm btn-danger">📄 PDF</a>
+                            <a href="{{ url_for('generar_pdf', placa=moto.get('placa')) }}"
+                                class="btn btn-sm btn-danger shadow-sm"
+                                style="font-weight: bold; border: 1px solid #7c0000;">
+                                <i class="bi bi-file-earmark-pdf"></i> 📄 PDF
+                            </a>
                             <a href="{{ url_for('enviar_whatsapp', placa=moto.get('placa')) }}" target="_blank"
                                 class="btn btn-sm btn-success fw-bold ms-1">
                                 <i class="bi bi-whatsapp"></i> 💬 Hoja Vida

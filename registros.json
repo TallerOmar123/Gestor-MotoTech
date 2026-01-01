@@ -37,14 +37,26 @@
                 "KM": 25000,
                 "Descripcion": "cambio de aceite y revisión general",
                 "Costo": 50000
+            },
+            {
+                "Fecha": "",
+                "KM": 25000,
+                "Descripcion": "cambio de aceite, revision general",
+                "Costo": 50000
+            },
+            {
+                "Fecha": "",
+                "KM": 25000,
+                "Descripcion": "revision",
+                "Costo": 50000
             }
         ],
         "estado_aceite": "✅ Óptimo",
         "estado_frenos": "🚨 Urgente",
         "estado_electrico": "✅ Óptimo",
         "estado_kit": "⚠️ Pronto Cambio",
-        "estado_clutch": "⚠️ Pronto Cambio",
-        "estado_barras": "🚨 Urgente"
+        "estado_clutch": "🚨 Urgente",
+        "estado_barras": "⚠️ Pronto Cambio"
     },
     {
         "placa": "MT102B",
