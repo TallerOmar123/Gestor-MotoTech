@@ -1,4 +1,15 @@
+# Archivos temporales de Python (Basura del sistema)
 __pycache__/
+*.py[cod]
+*$py.class
 venv/
-*.pyc
-reportes/
+env/
+
+# Archivos de configuración de VS Code
+.vscode/
+
+# Archivos de datos locales (Si NO quieres que tus clientes se suban a la nube)
+registros.json
+
+# Reportes PDF temporales que se generan
+*.pdf
