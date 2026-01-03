@@ -102,10 +102,24 @@
         "placa": "MT104D",
         "dueño": "Luis Mora",
         "moto": "CB125F",
-        "km_actual": 1200,
+        "km_actual": 10000,
         "km_proximo_mantenimiento": 6200,
         "telefono": "3209998877",
-        "historial": []
+        "historial": [],
+        "estado_aceite": "✅ Óptimo",
+        "estado_frenos": "✅ Óptimo",
+        "estado_electrico": "⚠️ Pronto Cambio",
+        "estado_kit": "⚠️ Pronto Cambio",
+        "estado_clutch": "🚨 Urgente",
+        "estado_barras": "✅ Óptimo",
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 10000,
+                "Descripcion": "mantenimiento preventivo",
+                "Costo": 120000
+            }
+        ]
     },
     {
         "placa": "MT105E",
@@ -120,19 +134,47 @@
         "placa": "MT106F",
         "dueño": "Pedro Infante",
         "moto": "Pulsar 160",
-        "km_actual": 8950,
+        "km_actual": 15000,
         "km_proximo_mantenimiento": 9000,
         "telefono": "3127771122",
-        "historial": []
+        "historial": [],
+        "estado_aceite": "✅ Óptimo",
+        "estado_frenos": "🚨 Urgente",
+        "estado_electrico": "✅ Óptimo",
+        "estado_kit": "⚠️ Pronto Cambio",
+        "estado_clutch": "⚠️ Pronto Cambio",
+        "estado_barras": "✅ Óptimo",
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 15000,
+                "Descripcion": "mantenimiento preventivo ",
+                "Costo": 120000
+            }
+        ]
     },
     {
         "placa": "MT109I",
         "dueño": "Rosa Diaz",
         "moto": "Victory One",
-        "km_actual": 7480,
+        "km_actual": 23000,
         "km_proximo_mantenimiento": 7500,
         "telefono": "3112223344",
-        "historial": []
+        "historial": [],
+        "estado_aceite": "✅ Óptimo",
+        "estado_frenos": "⚠️ Pronto Cambio",
+        "estado_electrico": "✅ Óptimo",
+        "estado_kit": "✅ Óptimo",
+        "estado_clutch": "✅ Óptimo",
+        "estado_barras": "🚨 Urgente",
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 23000,
+                "Descripcion": "mantenimiento general",
+                "Costo": 220000
+            }
+        ]
     },
     {
         "placa": "MT112L",
@@ -907,5 +949,14 @@
         "km_proximo_mantenimiento": 47700,
         "telefono": "3001112305",
         "historial": []
+    },
+    {
+        "placa": "HTY67G",
+        "dueño": "Martha Padilla ",
+        "telefono": "3021214068",
+        "moto": "Akt flex",
+        "km_actual": 25000,
+        "km_proximo_mantenimiento": 35000,
+        "Mantenimientos": []
     }
 ]

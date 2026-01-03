@@ -82,27 +82,38 @@ def revisar_mantenimientos_logica():
 
 
 # **************************************************************
-# BLOQUE 5: RUTA PRINCIPAL
+# BLOQUE 5: RUTA PRINCIPAL (CORREGIDO PARA EVITAR TYPEERROR)
 # **************************************************************
 @app.route('/')
 def index():
+    # Cargamos los datos usando logic
     todos = logic.cargar_registros()
+    
+    # Lógica para edición
     placa_a_editar = request.args.get('editar_placa')
     cliente_a_editar = None
-
     if placa_a_editar:
-        cliente_a_editar = next(
-            (c for c in todos if c.get('placa') == placa_a_editar), None)
+        cliente_a_editar = next((c for c in todos if c.get('placa') == placa_a_editar), None)
 
-    # CAMBIAMOS ESTA LÍNEA para que use la lógica de arriba:
+    # Lógica de alertas de mantenimiento
     proximos = revisar_mantenimientos_logica()
+
+    # --- SEGURIDAD PARA EL BALANCE TOTAL ---
+    try:
+        ingresos_totales = logic.calcular_balance_total(todos)
+        if ingresos_totales is None:
+            ingresos_totales = 0
+    except Exception as e:
+        print(f"Error al calcular balance: {e}")
+        ingresos_totales = 0 
+    # ---------------------------------------
 
     return render_template('index.html',
                            todos=todos,
                            proximos=proximos,
                            cliente_a_editar=cliente_a_editar,
-                           placa_a_editar=placa_a_editar)
-
+                           placa_a_editar=placa_a_editar,
+                           ingresos_totales=ingresos_totales) # Ahora siempre es un número
 
 # **************************************************************
 # BLOQUE 6: LÓGICA DE GUARDAR/EDITAR (CORREGIDO)
@@ -356,4 +367,5 @@ def generar_pdf(placa):
     return send_file(nombre_archivo, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # host='0.0.0.0' abre la conexión para el celular
+    app.run(host='0.0.0.0', port=5000, debug=True)

@@ -80,6 +80,31 @@
                 style="width: 350px; height: auto; border-radius: 10px;">
             <h1 class="mt-2">🏍️ Gestor MotoTech</h1>
         </div>
+        <div class="row mb-4 justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-lg border-0 text-white"
+                    style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); border-radius: 15px;">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center text-center">
+                            <div class="col-12">
+                                <p class="text-uppercase mb-1"
+                                    style="letter-spacing: 3px; opacity: 0.7; font-size: 0.75rem;">💰 Balance Total de
+                                    Ingresos</p>
+                                <h2 class="display-4 fw-bold mb-0"
+                                    style="color: #00d2ff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                                    $ {{ "{:,.0f}".format(ingresos_totales) }}
+                                </h2>
+                                <div class="mt-2">
+                                    <span class="badge rounded-pill bg-success" style="font-size: 0.8rem;">
+                                        <i class="bi bi-graph-up"></i> Sistema Sincronizado
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -188,6 +213,7 @@
                         <th>Dueño</th>
                         <th>Moto</th>
                         <th>KM</th>
+                        <th>Ingreso</th>
                         <th class="text-center">GESTIÓN</th>
                     </tr>
                 </thead>
@@ -198,6 +224,7 @@
                         <td>{{ moto.get('dueño') }}</td>
                         <td><small>{{ moto.get('moto') }}</small></td>
                         <td>{{ moto.get('km_actual') }}</td>
+                        <td class="text-muted small fw-bold">{{ moto.get('fecha_entrada', '---') }}</td>
                         <td class="text-center">
                             <a href="{{ url_for('generar_pdf', placa=moto.get('placa')) }}"
                                 class="btn btn-sm btn-danger shadow-sm"
@@ -208,7 +235,10 @@
                                 class="btn btn-sm btn-success fw-bold ms-1">
                                 <i class="bi bi-whatsapp"></i> 💬 Hoja Vida
                             </a>
-
+                            <a href="tel:{{ moto.get('telefono') }}"
+                                class="btn btn-sm btn-info text-white fw-bold ms-1">
+                                📞 Llamar
+                            </a>
                             <button onclick="abrirServicio('{{ moto.get('placa') }}')"
                                 class="btn btn-sm btn-warning fw-bold ms-1">🛠️</button>
                             <button onclick="verHistorial('{{ moto.get('placa') }}')"
