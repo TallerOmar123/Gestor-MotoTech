@@ -23,15 +23,28 @@ MARGEN_ALERTA = 5000
 
 
 def cargar_registros():
-    """Carga los registros siempre como una LISTA []."""
+    # Definimos la ruta dentro de la función por seguridad
+    ruta = 'registros.json'
     try:
-        if os.path.exists(ARCHIVO):
-            with open(ARCHIVO, 'r', encoding='utf-8') as file:
-                datos = json.load(file)
-                return datos if isinstance(datos, list) else []
+        import os
+        import json
+        if os.path.exists(ruta):
+            with open(ruta, 'r', encoding='utf-8') as f:
+                datos = json.load(f)
+                # Si el archivo está vacío o no es una lista, devolvemos lista vacía
+                if not isinstance(datos, list):
+                    return []
+                
+                # REPARACIÓN DE DATOS: Asegura que todos tengan los campos básicos
+                for moto in datos:
+                    if 'fecha_entrada' not in moto:
+                        moto['fecha_entrada'] = "Previo 2026"
+                    if 'Mantenimientos' not in moto:
+                        moto['Mantenimientos'] = []
+                return datos
         return []
     except Exception as e:
-        print(f"Error al cargar: {e}")
+        print(f"Error al cargar registros: {e}")
         return []
 
 

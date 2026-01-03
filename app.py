@@ -157,31 +157,42 @@ def agregar_cliente_web():
 
 
 # **************************************************************
-# BLOQUE 7: RUTA PARA REGISTRAR TRABAJOS
+# BLOQUE 7: RUTA PARA REGISTRAR TRABAJOS (ACTUALIZADO)
 # **************************************************************
 @app.route('/mantenimiento', methods=['POST'])
 def agregar_mantenimiento_web():
     placa = request.form.get('placa_mantenimiento').upper()
     registros = cargar_registros()
     cliente = next((m for m in registros if m.get('placa') == placa), None)
+    
     if cliente:
+        costo_actual = int(request.form.get('costo_mantenimiento') or 0)
         nuevo = {
             "Fecha": request.form.get('fecha_mantenimiento'),
-            "KM": int(request.form.get('km_mantenimiento')),
+            "KM": int(request.form.get('km_mantenimiento') or 0),
             "Descripcion": request.form.get('descripcion_mantenimiento'),
-            "Costo": int(request.form.get('costo_mantenimiento'))
+            "Costo": costo_actual
         }
 
-# ========================================================
-        # INYECCIÓN: ACTUALIZACIÓN DE HOJA DE VIDA TÉCNICA
-        # ========================================================
+        # ACTUALIZACIÓN DE HOJA DE VIDA TÉCNICA
         cliente['estado_aceite'] = request.form.get('aceite')
+        # --- NUEVA INYECCIÓN: SUBDIVISIONES TÉCNICAS ---
+        cliente['freno_del'] = request.form.get('freno_del')
+        cliente['freno_tras'] = request.form.get('freno_tras')
+        cliente['liq_frenos'] = request.form.get('liq_frenos')
+        cliente['lavado_carburador'] = request.form.get('lavado_carburador')
+        cliente['filtro_bujia'] = request.form.get('filtro_bujia')
+        cliente['engrase_tijera'] = request.form.get('engrase_tijera')
+        cliente['mantenimiento_guayas'] = request.form.get('mantenimiento_guayas')
+        # -----------------------------------------------
         cliente['estado_frenos'] = request.form.get('frenos')
         cliente['estado_electrico'] = request.form.get('electrico')
         cliente['estado_kit'] = request.form.get('kit_arrastre')
         cliente['estado_clutch'] = request.form.get('clutch')
         cliente['estado_barras'] = request.form.get('barras')
-        # ========================================================
+
+        # REGISTRO DE ÚLTIMO COBRO PARA WHATSAPP
+        cliente['ultimo_cobro'] = costo_actual
 
         if 'Mantenimientos' not in cliente:
             cliente['Mantenimientos'] = []
@@ -189,8 +200,8 @@ def agregar_mantenimiento_web():
         cliente['km_actual'] = nuevo['KM']
         guardar_registros(registros)
         flash(f"✅ ¡Éxito! Servicio guardado para {placa}", "warning")
+        
     return redirect(url_for('index'))
-
 
 # **************************************************************
 # BLOQUE 8: RUTA PARA ACTIVAR LA EDICIÓN
@@ -239,39 +250,18 @@ def enviar_whatsapp(placa):
     if not moto:
         return "Moto no encontrada", 404
 
-    # Diccionario de estados en texto puro y limpio
-    estados_texto = {
-        "✅ Óptimo": "BIEN",
-        "⚠️ Pronto Cambio": "AVISO / PRONTO CAMBIO",
-        "🚨 Urgente": "CRITICO / CAMBIO URGENTE"
-    }
+    # Formatear el precio con puntos de miles (ej: 150.000)
+    cobro = moto.get('ultimo_cobro', 0)
+    cobro_formateado = f"{cobro:,.0f}".replace(",", ".")
 
-    # Procesar estados (si no hay datos, pone "No registrado")
-    aceite = estados_texto.get(moto.get('estado_aceite'), "No registrado")
-    frenos = estados_texto.get(moto.get('estado_frenos'), "No registrado")
-    elec = estados_texto.get(moto.get('estado_electrico'), "No registrado")
-    kit = estados_texto.get(moto.get('estado_kit'), "No registrado")
-    clutch = estados_texto.get(moto.get('estado_clutch'), "No registrado")
-    barras = estados_texto.get(moto.get('estado_barras'), "No registrado")
-
-    # Construcción del mensaje (Sin emojis, solo formato de texto WhatsApp)
+    # Construcción del mensaje de SALIDA
     texto = (
-        "*MOTOTECH - REPORTE TECNICO*\n"
-        f"Placa: *{moto.get('placa')}*\n"
-        "------------------------------------------\n\n"
+        f"✅ *MOTOTECH - MOTO LISTA*\n\n"
         f"Hola *{moto.get('dueño')}*,\n"
-        "Este es el diagnostico de su moto:\n\n"
-        f"1. ACEITE MOTOR: {aceite}\n"
-        f"2. SISTEMA FRENOS: {frenos}\n"
-        f"3. SISTEMA ELECTRICO: {elec}\n"
-        f"4. KIT ARRASTRE: {kit}\n"
-        f"5. CLUTCH: {clutch}\n"
-        f"6. BARRAS / SUSPENSION: {barras}\n\n"
-        "------------------------------------------\n"
-        f"KM ACTUAL: {moto.get('km_actual')} km\n"
-        f"PROXIMA CITA: {moto.get('km_proximo_mantenimiento')} km\n\n"
-        "Su reporte detallado en PDF ha sido generado.\n"
-        "Gracias por confiar en MOTOTECH."
+        f"Le informamos que el servicio técnico de su moto placa *{moto.get('placa')}* ha finalizado con éxito.\n\n"
+        f"💰 *VALOR A PAGAR:* ${cobro_formateado}\n"
+        f"📄 *REPORTE TÉCNICO:* Su informe detallado en PDF ya está disponible.\n\n"
+        "Ya puede pasar al taller por su vehículo. ¡Gracias por elegirnos! 🏍️"
     )
 
     mensaje_codificado = urllib.parse.quote(texto)
@@ -310,38 +300,96 @@ def generar_pdf(placa):
 
     # --- 3. TABLA DE ESTADOS ---
     y = height - 170
+
+
+    # NUEVA ESTRUCTURA DE DIAGNÓSTICO DETALLADO
     items = [
-        ("ACEITE MOTOR", moto.get('estado_aceite')),
-        ("SISTEMA FRENOS", moto.get('estado_frenos')),
-        ("SISTEMA ELECTRICO", moto.get('estado_electrico')),
-        ("KIT ARRASTRE", moto.get('estado_kit')),
-        ("CLUTCH", moto.get('estado_clutch')),
-        ("BARRAS", moto.get('estado_barras'))
+        ("--- SISTEMA DE FRENOS ---", ""),
+        ("Freno Delantero", moto.get('freno_del')),
+        ("Freno Trasero", moto.get('freno_tras')),
+        ("Líquido / Caliper", moto.get('liq_frenos')),
+        ("--- MOTOR Y SINCRONIZACIÓN ---", ""),
+        ("Aceite Motor", moto.get('estado_aceite')),
+        ("Lavado Carburador", moto.get('lavado_carburador')),
+        ("Filtro Aire / Bujía", moto.get('filtro_bujia')),
+        ("--- CHASIS Y CONTROL ---", ""),
+        ("Aceite Barras", moto.get('estado_barras')),
+        ("Engrase Tijera", moto.get('engrase_tijera')),
+        ("Mantenimiento Guayas", moto.get('mantenimiento_guayas')),
+        ("Sistema Eléctrico", moto.get('estado_electrico'))
     ]
 
     for nombre, estado in items:
+        # Si es un título de sección (los que tienen ---)
+        if "---" in nombre:
+            y -= 10
+            c.setFillColor(colors.HexColor("#D5D8DC"))
+            c.rect(40, y-5, 520, 15, fill=1)
+            c.setFillColor(colors.black)
+            c.setFont("Helvetica-Bold", 9)
+            c.drawString(50, y, nombre)
+            y -= 20
+            continue
+
+        # Dibujar nombre del ítem
         c.setFillColor(colors.black)
         c.setFont("Helvetica", 10)
         c.drawString(50, y, nombre)
         
+        # LÓGICA DE SEMÁFORO (Colores dinámicos)
         color_celda = colors.white
-        texto_prioridad = "NORMAL"
+        texto_prioridad = "S.D" # Sin Datos
         
         if estado == "✅ Óptimo":
             color_celda = colors.lightgreen
-            texto_prioridad = "BIEN"
+            texto_prioridad = "OK - OPTIMO"
         elif estado == "⚠️ Pronto Cambio":
             color_celda = colors.yellow
-            texto_prioridad = "AVISO"
+            texto_prioridad = "SEGUIMIENTO"
         elif estado == "🚨 Urgente":
             color_celda = colors.tomato
-            texto_prioridad = "CRITICO"
+            texto_prioridad = "CAMBIO URGENTE"
 
+        # Dibujar el cuadro de estado
         c.setFillColor(color_celda)
-        c.rect(320, y-5, 100, 15, fill=1)
+        c.rect(400, y-5, 120, 15, fill=1)
         c.setFillColor(colors.black)
-        c.drawCentredString(370, y, texto_prioridad)
-        y -= 25
+        c.drawCentredString(460, y, texto_prioridad)
+        y -= 20
+
+    # BLOQUE DE RECOMENDACIONES AUTOMÁTICAS
+    y -= 20
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(40, y, "OBSERVACIONES Y RECOMENDACIONES:")
+    c.line(40, y-2, 250, y-2)
+    y -= 20
+    c.setFont("Helvetica-Oblique", 9)
+    
+    # Lógica inteligente de texto
+    recom_txt = "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad."
+    c.drawString(50, y, recom_txt)
+
+
+    # --- NUEVA INYECCIÓN: RESUMEN DE INVERSIÓN Y PRÓXIMA CITA ---
+    y -= 45
+    # Dibujamos un rectángulo suave de fondo para el resumen
+    c.setFillColor(colors.HexColor("#F2F4F4"))
+    c.rect(40, y-10, 520, 40, fill=1, stroke=0)
+    
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica-Bold", 11)
+    
+    # Formateamos el costo con puntos de miles para que se vea profesional
+    ultimo_cobro = moto.get('ultimo_cobro', 0)
+    costo_formateado = f"{ultimo_cobro:,.0f}".replace(",", ".")
+    
+    c.drawString(60, y+15, f"VALOR TOTAL DEL SERVICIO: $ {costo_formateado}")
+    
+    c.setFont("Helvetica-Bold", 10)
+    c.setFillColor(colors.HexColor("#1B2631"))
+    km_prox = moto.get('km_proximo_mantenimiento', '---')
+    c.drawString(60, y, f"SUGERENCIA PRÓXIMA VISITA: {km_prox} KM")
+    # ------------------------------------------------------------
 
     # --- 4. PIE DE PÁGINA: SELLO DE MARCA Y FECHA ---
     # Definimos la base del footer

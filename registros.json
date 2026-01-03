@@ -3,7 +3,7 @@
         "placa": "MT101A",
         "dueño": "Omar Castañeda",
         "moto": "Hero190R",
-        "km_actual": 25000,
+        "km_actual": 35000,
         "km_proximo_mantenimiento": 15200,
         "telefono": "3172710844",
         "historial": [],
@@ -49,14 +49,22 @@
                 "KM": 25000,
                 "Descripcion": "revision",
                 "Costo": 50000
+            },
+            {
+                "Fecha": "",
+                "KM": 35000,
+                "Descripcion": "Mantenimiento General",
+                "Costo": 220000
             }
         ],
         "estado_aceite": "✅ Óptimo",
-        "estado_frenos": "🚨 Urgente",
+        "estado_frenos": "✅ Óptimo",
         "estado_electrico": "✅ Óptimo",
-        "estado_kit": "⚠️ Pronto Cambio",
-        "estado_clutch": "🚨 Urgente",
-        "estado_barras": "⚠️ Pronto Cambio"
+        "estado_kit": "✅ Óptimo",
+        "estado_clutch": "⚠️ Pronto Cambio",
+        "estado_barras": "🚨 Urgente",
+        "ultimo_cobro": 220000,
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT102B",
@@ -73,7 +81,8 @@
                 "Descripcion": "mantenimiento General",
                 "Costo": 200000
             }
-        ]
+        ],
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT103C",
@@ -96,7 +105,8 @@
                 "Descripcion": "Mantenimiento General",
                 "Costo": 200000
             }
-        ]
+        ],
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT104D",
@@ -119,7 +129,8 @@
                 "Descripcion": "mantenimiento preventivo",
                 "Costo": 120000
             }
-        ]
+        ],
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT105E",
@@ -128,7 +139,9 @@
         "km_actual": 4992,
         "km_proximo_mantenimiento": 5000,
         "telefono": "3115556644",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT106F",
@@ -151,7 +164,8 @@
                 "Descripcion": "mantenimiento preventivo ",
                 "Costo": 120000
             }
-        ]
+        ],
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT109I",
@@ -174,7 +188,8 @@
                 "Descripcion": "mantenimiento general",
                 "Costo": 220000
             }
-        ]
+        ],
+        "fecha_entrada": "Previo 2026"
     },
     {
         "placa": "MT112L",
@@ -183,7 +198,9 @@
         "km_actual": 3000,
         "km_proximo_mantenimiento": 43000,
         "telefono": "3196662233",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT113M",
@@ -192,7 +209,9 @@
         "km_actual": 9975,
         "km_proximo_mantenimiento": 10000,
         "telefono": "3218884455",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT116P",
@@ -201,7 +220,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 11000,
         "telefono": "3001112201",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT117Q",
@@ -210,7 +231,9 @@
         "km_actual": 5000,
         "km_proximo_mantenimiento": 25000,
         "telefono": "3001112202",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT118R",
@@ -219,7 +242,9 @@
         "km_actual": 2000,
         "km_proximo_mantenimiento": 32000,
         "telefono": "3001112203",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT119S",
@@ -228,7 +253,9 @@
         "km_actual": 4500,
         "km_proximo_mantenimiento": 44500,
         "telefono": "3001112204",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT120T",
@@ -237,7 +264,9 @@
         "km_actual": 7000,
         "km_proximo_mantenimiento": 17000,
         "telefono": "3001112205",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT122V",
@@ -246,7 +275,9 @@
         "km_actual": 9000,
         "km_proximo_mantenimiento": 19000,
         "telefono": "3001112207",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT123W",
@@ -255,7 +286,9 @@
         "km_actual": 2000,
         "km_proximo_mantenimiento": 12000,
         "telefono": "3001112208",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT124X",
@@ -264,7 +297,9 @@
         "km_actual": 3000,
         "km_proximo_mantenimiento": 33000,
         "telefono": "3001112209",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT125Y",
@@ -273,7 +308,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 41000,
         "telefono": "3001112210",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT126Z",
@@ -282,7 +319,9 @@
         "km_actual": 4000,
         "km_proximo_mantenimiento": 14000,
         "telefono": "3001112211",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT127A",
@@ -291,7 +330,9 @@
         "km_actual": 5500,
         "km_proximo_mantenimiento": 15500,
         "telefono": "3001112212",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT128B",
@@ -300,7 +341,9 @@
         "km_actual": 8000,
         "km_proximo_mantenimiento": 28000,
         "telefono": "3001112213",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT129C",
@@ -309,7 +352,9 @@
         "km_actual": 1200,
         "km_proximo_mantenimiento": 11200,
         "telefono": "3001112214",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT130D",
@@ -318,7 +363,9 @@
         "km_actual": 6000,
         "km_proximo_mantenimiento": 16000,
         "telefono": "3001112215",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT131E",
@@ -327,7 +374,9 @@
         "km_actual": 3300,
         "km_proximo_mantenimiento": 23300,
         "telefono": "3001112216",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT132F",
@@ -336,7 +385,9 @@
         "km_actual": 4400,
         "km_proximo_mantenimiento": 34400,
         "telefono": "3001112217",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT133G",
@@ -345,7 +396,9 @@
         "km_actual": 2200,
         "km_proximo_mantenimiento": 12200,
         "telefono": "3001112218",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT134H",
@@ -354,7 +407,9 @@
         "km_actual": 5100,
         "km_proximo_mantenimiento": 15100,
         "telefono": "3001112219",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT135I",
@@ -363,7 +418,9 @@
         "km_actual": 7200,
         "km_proximo_mantenimiento": 47200,
         "telefono": "3001112220",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT136J",
@@ -372,7 +429,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 11000,
         "telefono": "3001112221",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT137K",
@@ -381,7 +440,9 @@
         "km_actual": 2800,
         "km_proximo_mantenimiento": 12800,
         "telefono": "3001112222",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT138L",
@@ -390,7 +451,9 @@
         "km_actual": 4000,
         "km_proximo_mantenimiento": 24000,
         "telefono": "3001112223",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT139M",
@@ -399,7 +462,9 @@
         "km_actual": 6500,
         "km_proximo_mantenimiento": 16500,
         "telefono": "3001112224",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT140N",
@@ -408,7 +473,9 @@
         "km_actual": 1500,
         "km_proximo_mantenimiento": 31500,
         "telefono": "3001112225",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT141O",
@@ -417,7 +484,9 @@
         "km_actual": 3800,
         "km_proximo_mantenimiento": 13800,
         "telefono": "3001112226",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT142P",
@@ -426,7 +495,9 @@
         "km_actual": 4200,
         "km_proximo_mantenimiento": 14200,
         "telefono": "3001112227",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT143Q",
@@ -435,7 +506,9 @@
         "km_actual": 9000,
         "km_proximo_mantenimiento": 39000,
         "telefono": "3001112228",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT144R",
@@ -444,7 +517,9 @@
         "km_actual": 2500,
         "km_proximo_mantenimiento": 12500,
         "telefono": "3001112229",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT145S",
@@ -453,7 +528,9 @@
         "km_actual": 1100,
         "km_proximo_mantenimiento": 11100,
         "telefono": "3001112230",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT146T",
@@ -462,7 +539,9 @@
         "km_actual": 5000,
         "km_proximo_mantenimiento": 25000,
         "telefono": "3001112231",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT147U",
@@ -471,7 +550,9 @@
         "km_actual": 8200,
         "km_proximo_mantenimiento": 18200,
         "telefono": "3001112232",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT148V",
@@ -480,7 +561,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 11000,
         "telefono": "3001112233",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT149W",
@@ -489,7 +572,9 @@
         "km_actual": 3300,
         "km_proximo_mantenimiento": 33300,
         "telefono": "3001112234",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT150X",
@@ -498,7 +583,9 @@
         "km_actual": 5500,
         "km_proximo_mantenimiento": 15500,
         "telefono": "3001112235",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT151Y",
@@ -507,7 +594,9 @@
         "km_actual": 7800,
         "km_proximo_mantenimiento": 37800,
         "telefono": "3001112236",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT152Z",
@@ -516,7 +605,9 @@
         "km_actual": 1200,
         "km_proximo_mantenimiento": 11200,
         "telefono": "3001112237",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT153A",
@@ -525,7 +616,9 @@
         "km_actual": 4400,
         "km_proximo_mantenimiento": 14400,
         "telefono": "3001112238",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT154B",
@@ -534,7 +627,9 @@
         "km_actual": 9100,
         "km_proximo_mantenimiento": 29100,
         "telefono": "3001112239",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT155C",
@@ -543,7 +638,9 @@
         "km_actual": 2100,
         "km_proximo_mantenimiento": 12100,
         "telefono": "3001112240",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT156D",
@@ -552,7 +649,9 @@
         "km_actual": 4500,
         "km_proximo_mantenimiento": 14500,
         "telefono": "3001112241",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT157E",
@@ -561,7 +660,9 @@
         "km_actual": 600,
         "km_proximo_mantenimiento": 20600,
         "telefono": "3001112242",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT158F",
@@ -570,7 +671,9 @@
         "km_actual": 7000,
         "km_proximo_mantenimiento": 17000,
         "telefono": "3001112243",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT159G",
@@ -579,7 +682,9 @@
         "km_actual": 2000,
         "km_proximo_mantenimiento": 12000,
         "telefono": "3001112244",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT160H",
@@ -588,7 +693,9 @@
         "km_actual": 5000,
         "km_proximo_mantenimiento": 45000,
         "telefono": "3001112245",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT161I",
@@ -597,7 +704,9 @@
         "km_actual": 8000,
         "km_proximo_mantenimiento": 18000,
         "telefono": "3001112246",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT162J",
@@ -606,7 +715,9 @@
         "km_actual": 1100,
         "km_proximo_mantenimiento": 11100,
         "telefono": "3001112247",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT163K",
@@ -615,7 +726,9 @@
         "km_actual": 3400,
         "km_proximo_mantenimiento": 13400,
         "telefono": "3001112248",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT164L",
@@ -624,7 +737,9 @@
         "km_actual": 6200,
         "km_proximo_mantenimiento": 36200,
         "telefono": "3001112249",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT165M",
@@ -633,7 +748,9 @@
         "km_actual": 1400,
         "km_proximo_mantenimiento": 11400,
         "telefono": "3001112250",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT166N",
@@ -642,7 +759,9 @@
         "km_actual": 4800,
         "km_proximo_mantenimiento": 14800,
         "telefono": "3001112251",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT167O",
@@ -651,7 +770,9 @@
         "km_actual": 9500,
         "km_proximo_mantenimiento": 29500,
         "telefono": "3001112252",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT168P",
@@ -660,7 +781,9 @@
         "km_actual": 2600,
         "km_proximo_mantenimiento": 12600,
         "telefono": "3001112253",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT169Q",
@@ -669,7 +792,9 @@
         "km_actual": 4200,
         "km_proximo_mantenimiento": 14200,
         "telefono": "3001112254",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT170R",
@@ -678,7 +803,9 @@
         "km_actual": 7000,
         "km_proximo_mantenimiento": 47000,
         "telefono": "3001112255",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT171S",
@@ -687,7 +814,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 11000,
         "telefono": "3001112256",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT172T",
@@ -696,7 +825,9 @@
         "km_actual": 3200,
         "km_proximo_mantenimiento": 13200,
         "telefono": "3001112257",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT173U",
@@ -705,7 +836,9 @@
         "km_actual": 5800,
         "km_proximo_mantenimiento": 35800,
         "telefono": "3001112258",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT174V",
@@ -714,7 +847,9 @@
         "km_actual": 8500,
         "km_proximo_mantenimiento": 18500,
         "telefono": "3001112259",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT175W",
@@ -723,7 +858,9 @@
         "km_actual": 1900,
         "km_proximo_mantenimiento": 41900,
         "telefono": "3001112260",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT176X",
@@ -732,7 +869,9 @@
         "km_actual": 4400,
         "km_proximo_mantenimiento": 14400,
         "telefono": "3001112261",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT177Y",
@@ -741,7 +880,9 @@
         "km_actual": 6800,
         "km_proximo_mantenimiento": 16800,
         "telefono": "3001112262",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT178Z",
@@ -750,7 +891,9 @@
         "km_actual": 900,
         "km_proximo_mantenimiento": 20900,
         "telefono": "3001112263",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT179A",
@@ -759,7 +902,9 @@
         "km_actual": 2700,
         "km_proximo_mantenimiento": 12700,
         "telefono": "3001112264",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT180B",
@@ -768,7 +913,9 @@
         "km_actual": 5100,
         "km_proximo_mantenimiento": 35100,
         "telefono": "3001112265",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT181C",
@@ -777,7 +924,9 @@
         "km_actual": 7600,
         "km_proximo_mantenimiento": 17600,
         "telefono": "3001112266",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT182D",
@@ -786,7 +935,9 @@
         "km_actual": 1300,
         "km_proximo_mantenimiento": 11300,
         "telefono": "3001112267",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT183E",
@@ -795,7 +946,9 @@
         "km_actual": 3800,
         "km_proximo_mantenimiento": 43800,
         "telefono": "3001112268",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT184F",
@@ -804,7 +957,9 @@
         "km_actual": 6200,
         "km_proximo_mantenimiento": 16200,
         "telefono": "3001112269",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT185G",
@@ -813,7 +968,9 @@
         "km_actual": 9000,
         "km_proximo_mantenimiento": 19000,
         "telefono": "3001112270",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT186H",
@@ -822,7 +979,9 @@
         "km_actual": 1800,
         "km_proximo_mantenimiento": 21800,
         "telefono": "3001112271",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT187I",
@@ -831,7 +990,9 @@
         "km_actual": 4600,
         "km_proximo_mantenimiento": 14600,
         "telefono": "3001112272",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT188J",
@@ -840,7 +1001,9 @@
         "km_actual": 7100,
         "km_proximo_mantenimiento": 37100,
         "telefono": "3001112273",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT189K",
@@ -849,7 +1012,9 @@
         "km_actual": 1000,
         "km_proximo_mantenimiento": 11000,
         "telefono": "3001112274",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT190L",
@@ -858,7 +1023,9 @@
         "km_actual": 3500,
         "km_proximo_mantenimiento": 13500,
         "telefono": "3001112275",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT191M",
@@ -867,7 +1034,9 @@
         "km_actual": 6000,
         "km_proximo_mantenimiento": 46000,
         "telefono": "3001112276",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT192N",
@@ -876,7 +1045,9 @@
         "km_actual": 8500,
         "km_proximo_mantenimiento": 18500,
         "telefono": "3001112277",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT193O",
@@ -885,7 +1056,9 @@
         "km_actual": 1500,
         "km_proximo_mantenimiento": 11500,
         "telefono": "3001112278",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT194P",
@@ -894,7 +1067,9 @@
         "km_actual": 4200,
         "km_proximo_mantenimiento": 24200,
         "telefono": "3001112279",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT195Q",
@@ -903,7 +1078,9 @@
         "km_actual": 6900,
         "km_proximo_mantenimiento": 16900,
         "telefono": "3001112280",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT196R",
@@ -912,7 +1089,9 @@
         "km_actual": 9200,
         "km_proximo_mantenimiento": 49200,
         "telefono": "3001112301",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT197S",
@@ -921,7 +1100,9 @@
         "km_actual": 1100,
         "km_proximo_mantenimiento": 11100,
         "telefono": "3001112302",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT198T",
@@ -930,7 +1111,9 @@
         "km_actual": 3800,
         "km_proximo_mantenimiento": 13800,
         "telefono": "3001112303",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT199U",
@@ -939,7 +1122,9 @@
         "km_actual": 5400,
         "km_proximo_mantenimiento": 25400,
         "telefono": "3001112304",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "MT200V",
@@ -948,7 +1133,9 @@
         "km_actual": 7700,
         "km_proximo_mantenimiento": 47700,
         "telefono": "3001112305",
-        "historial": []
+        "historial": [],
+        "fecha_entrada": "Previo 2026",
+        "Mantenimientos": []
     },
     {
         "placa": "HTY67G",
@@ -957,6 +1144,37 @@
         "moto": "Akt flex",
         "km_actual": 25000,
         "km_proximo_mantenimiento": 35000,
-        "Mantenimientos": []
+        "Mantenimientos": [],
+        "fecha_entrada": "Previo 2026"
+    },
+    {
+        "placa": "VWR20G",
+        "dueño": "Dayana Vega",
+        "telefono": "3212533253",
+        "moto": "",
+        "km_actual": 16123,
+        "km_proximo_mantenimiento": 26123,
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 16123,
+                "Descripcion": "Mantenimiento General y sistema Eléctrico",
+                "Costo": 220000
+            }
+        ],
+        "estado_aceite": null,
+        "freno_del": "✅ Óptimo",
+        "freno_tras": "✅ Óptimo",
+        "liq_frenos": "✅ Óptimo",
+        "lavado_carburador": "✅ Óptimo",
+        "filtro_bujia": "⚠️ Pronto Cambio",
+        "engrase_tijera": "✅ Óptimo",
+        "mantenimiento_guayas": "✅ Óptimo",
+        "estado_frenos": null,
+        "estado_electrico": null,
+        "estado_kit": null,
+        "estado_clutch": null,
+        "estado_barras": null,
+        "ultimo_cobro": 220000
     }
 ]

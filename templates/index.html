@@ -224,7 +224,6 @@
                         <td>{{ moto.get('dueño') }}</td>
                         <td><small>{{ moto.get('moto') }}</small></td>
                         <td>{{ moto.get('km_actual') }}</td>
-                        <td class="text-muted small fw-bold">{{ moto.get('fecha_entrada', '---') }}</td>
                         <td class="text-center">
                             <a href="{{ url_for('generar_pdf', placa=moto.get('placa')) }}"
                                 class="btn btn-sm btn-danger shadow-sm"
@@ -274,56 +273,81 @@
                                 placeholder="¿Qué se le hizo?" required></textarea>
                             <input type="number" name="costo_mantenimiento" class="form-control" placeholder="Costo $"
                                 required>
-                            <div class="mt-3 p-2 border rounded bg-light">
-                                <h6 class="text-center fw-bold text-primary mb-2">📋 ESTADO ACTUAL DE LA MOTO</h6>
-                                <div class="row g-2">
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Aceite Motor:</label>
-                                        <select name="aceite" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
+                            <div class="mt-3 p-3 border rounded bg-light">
+                                <h6 class="text-center fw-bold text-primary mb-3"
+                                    style="border-bottom: 2px solid #0d6efd;">📋 HOJA DE RUTA TÉCNICA</h6>
+
+                                <div class="mb-3">
+                                    <span class="badge bg-dark mb-2">🛑 SISTEMA DE FRENOS</span>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Freno Delantero:</label>
+                                            <select name="freno_del" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Freno Trasero:</label>
+                                            <select name="freno_tras" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Líquido Frenos/Caliper:</label>
+                                            <select name="liq_frenos" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Frenos:</label>
-                                        <select name="frenos" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <span class="badge bg-dark mb-2">⚙️ MOTOR Y SINCRONIZACIÓN</span>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Lavado Carburador:</label>
+                                            <select name="lavado_carburador" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Filtro Aire / Bujía:</label>
+                                            <select name="filtro_bujia" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Sist. Eléctrico:</label>
-                                        <select name="electrico" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Kit Arrastre:</label>
-                                        <select name="kit_arrastre" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Discos Clutch:</label>
-                                        <select name="clutch" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="small fw-bold">Aceite Barras:</label>
-                                        <select name="barras" class="form-select form-select-sm">
-                                            <option value="✅ Óptimo">✅ Óptimo</option>
-                                            <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
-                                            <option value="🚨 Urgente">🚨 Urgente</option>
-                                        </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <span class="badge bg-dark mb-2">🏗️ CHASIS, TIJERA Y GUAYAS</span>
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Engrase Tijera:</label>
+                                            <select name="engrase_tijera" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small fw-bold">Mantenimiento Guayas:</label>
+                                            <select name="mantenimiento_guayas" class="form-select form-select-sm">
+                                                <option value="✅ Óptimo">✅ Óptimo</option>
+                                                <option value="⚠️ Pronto Cambio">⚠️ Pronto Cambio</option>
+                                                <option value="🚨 Urgente">🚨 Urgente</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
