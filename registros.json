@@ -3,7 +3,7 @@
         "placa": "MT101A",
         "dueño": "Omar Castañeda",
         "moto": "Hero190R",
-        "km_actual": 35000,
+        "km_actual": 27000,
         "km_proximo_mantenimiento": 15200,
         "telefono": "3172710844",
         "historial": [],
@@ -55,16 +55,43 @@
                 "KM": 35000,
                 "Descripcion": "Mantenimiento General",
                 "Costo": 220000
+            },
+            {
+                "Fecha": "",
+                "KM": 25000,
+                "Descripcion": "cambio de discos y cambio de cauchos portasprocket",
+                "Costo": 80000,
+                "Fotos": [
+                    "MT101A_20260103_230825_.trashed-1764471803-IMG_20251021_105813900_HDR.jpg",
+                    "MT101A_20260103_230825_.trashed-1764471805-IMG_20251022_160311065.jpg"
+                ]
+            },
+            {
+                "Fecha": "",
+                "KM": 27000,
+                "Descripcion": "mantenimiento basico",
+                "Costo": 100000,
+                "Fotos": [
+                    "MT101A_20260103_231843_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
+                    "MT101A_20260103_231843_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
+                ]
             }
         ],
-        "estado_aceite": "✅ Óptimo",
-        "estado_frenos": "✅ Óptimo",
-        "estado_electrico": "✅ Óptimo",
-        "estado_kit": "✅ Óptimo",
-        "estado_clutch": "⚠️ Pronto Cambio",
-        "estado_barras": "🚨 Urgente",
-        "ultimo_cobro": 220000,
-        "fecha_entrada": "Previo 2026"
+        "estado_aceite": null,
+        "estado_frenos": null,
+        "estado_electrico": null,
+        "estado_kit": null,
+        "estado_clutch": null,
+        "estado_barras": null,
+        "ultimo_cobro": 100000,
+        "fecha_entrada": "Previo 2026",
+        "freno_del": "✅ Óptimo",
+        "freno_tras": "✅ Óptimo",
+        "liq_frenos": "✅ Óptimo",
+        "lavado_carburador": "✅ Óptimo",
+        "filtro_bujia": "✅ Óptimo",
+        "engrase_tijera": "✅ Óptimo",
+        "mantenimiento_guayas": "✅ Óptimo"
     },
     {
         "placa": "MT102B",
@@ -1151,7 +1178,7 @@
         "placa": "VWR20G",
         "dueño": "Dayana Vega",
         "telefono": "3212533253",
-        "moto": "",
+        "moto": "Akt flex",
         "km_actual": 16123,
         "km_proximo_mantenimiento": 26123,
         "Mantenimientos": [
@@ -1175,6 +1202,62 @@
         "estado_kit": null,
         "estado_clutch": null,
         "estado_barras": null,
-        "ultimo_cobro": 220000
+        "ultimo_cobro": 220000,
+        "fecha_entrada": "Previo 2026"
+    },
+    {
+        "placa": "VWR56G",
+        "dueño": "Juan Gonzales",
+        "telefono": "3011554311",
+        "moto": "Akt Nkd",
+        "km_actual": 456,
+        "km_proximo_mantenimiento": 5000,
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 456,
+                "Descripcion": "cambio de retenedores y liquido hidráulico",
+                "Costo": 70000,
+                "Fotos": [
+                    "VWR56G_20260103_232856_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
+                    "VWR56G_20260103_232856_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
+                ]
+            },
+            {
+                "Fecha": "",
+                "KM": 456,
+                "Descripcion": "cambio de retenedores y liquido hidráulico",
+                "Costo": 70000,
+                "Fotos": [
+                    "VWR56G_20260103_233229_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
+                    "VWR56G_20260103_233229_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
+                ]
+            },
+            {
+                "Fecha": "",
+                "KM": 456,
+                "Descripcion": "cambio de retenedores y liquido hidráulico",
+                "Costo": 70000,
+                "Fotos": [
+                    "VWR56G_20260104_000705_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
+                    "VWR56G_20260104_000705_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
+                ]
+            }
+        ],
+        "fecha_entrada": "Previo 2026",
+        "estado_aceite": null,
+        "freno_del": "✅ Óptimo",
+        "freno_tras": "✅ Óptimo",
+        "liq_frenos": "✅ Óptimo",
+        "lavado_carburador": "✅ Óptimo",
+        "filtro_bujia": "✅ Óptimo",
+        "engrase_tijera": "✅ Óptimo",
+        "mantenimiento_guayas": "✅ Óptimo",
+        "estado_frenos": null,
+        "estado_electrico": null,
+        "estado_kit": null,
+        "estado_clutch": null,
+        "estado_barras": null,
+        "ultimo_cobro": 70000
     }
 ]

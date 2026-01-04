@@ -12,6 +12,14 @@ from datetime import datetime
 import logic
 
 
+from werkzeug.utils import secure_filename
+
+# Configuración de carpeta para fotos
+CARPETA_FOTOS = os.path.join('static', 'fotos_mantenimiento')
+if not os.path.exists(CARPETA_FOTOS):
+    os.makedirs(CARPETA_FOTOS)
+
+
 # **************************************************************
 # BLOQUE 1: CONFIGURACIÓN INICIAL DEL SISTEMA
 # **************************************************************
@@ -167,11 +175,28 @@ def agregar_mantenimiento_web():
     
     if cliente:
         costo_actual = int(request.form.get('costo_mantenimiento') or 0)
+
+        # --- PROCESO DE CAPTURA DE IMÁGENES ---
+        lista_fotos = []
+        if 'fotos' in request.files:
+            archivos = request.files.getlist('fotos')
+            for foto in archivos:
+                if foto.filename != '':
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    nombre_seguro = secure_filename(f"{placa}_{timestamp}_{foto.filename}")
+                    foto.save(os.path.join(CARPETA_FOTOS, nombre_seguro))
+                    lista_fotos.append(nombre_seguro)
+        # ---------------------------------------
+
+
+
+
         nuevo = {
             "Fecha": request.form.get('fecha_mantenimiento'),
             "KM": int(request.form.get('km_mantenimiento') or 0),
             "Descripcion": request.form.get('descripcion_mantenimiento'),
-            "Costo": costo_actual
+            "Costo": costo_actual,
+            "Fotos": lista_fotos
         }
 
         # ACTUALIZACIÓN DE HOJA DE VIDA TÉCNICA
@@ -210,6 +235,15 @@ def agregar_mantenimiento_web():
 def editar_cliente(placa):
     registros = logic.cargar_registros()
     moto = next((m for m in registros if m.get('placa') == placa), None)
+
+
+    # Capturar fotos del último servicio para el anexo
+    ultimas_fotos = []
+    if moto.get('Mantenimientos'):
+        ultimo_servicio = moto['Mantenimientos'][-1]
+        ultimas_fotos = ultimo_servicio.get('Fotos', [])
+
+
     if moto:
         return redirect(url_for('index', editar_placa=placa))
     flash("❌ Moto no encontrada", "danger")
@@ -224,6 +258,14 @@ def descargar_reporte(placa):
     registros = cargar_registros()
     moto_encontrada = next(
         (m for m in registros if m.get('placa') == placa), None)
+    
+    # Obtener fotos del último mantenimiento si existen
+    ultimas_fotos = []
+    if moto.get('Mantenimientos'):
+        ultimo_servicio = moto['Mantenimientos'][-1]
+        ultimas_fotos = ultimo_servicio.get('Fotos', [])
+    
+
     if moto_encontrada:
         ruta_pdf = logic.generar_pdf_cliente(moto_encontrada)
         return send_file(ruta_pdf, as_attachment=True)
@@ -279,30 +321,32 @@ def generar_pdf(placa):
     if not moto:
         return "Moto no encontrada", 404
 
+    # --- CAPA SUPERIOR: PREPARACIÓN DE DATOS ---
+    ultimas_fotos = []
+    if moto.get('Mantenimientos'):
+        ultimo_servicio = moto['Mantenimientos'][-1]
+        ultimas_fotos = ultimo_servicio.get('Fotos', [])
+
     nombre_archivo = f"Reporte_{placa}.pdf"
     c = canvas.Canvas(nombre_archivo, pagesize=letter)
     width, height = letter
     fecha_hoy = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-    # --- 1. ENCABEZADO LIMPIO ---
+    # --- 1. ENCABEZADO HOJA 1 ---
     c.setFillColor(colors.HexColor("#1B2631"))
     c.rect(0, height - 80, width, 80, fill=1)
     c.setFillColor(colors.white)
     c.setFont("Helvetica-Bold", 20)
     c.drawString(40, height - 50, "MOTOTECH - REPORTE TECNICO")
 
-    # --- 2. DATOS DEL CLIENTE ---
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 11)
     c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño')}")
     c.drawString(40, height - 130, f"PLACA: {moto.get('placa')}")
     c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual')}")
 
-    # --- 3. TABLA DE ESTADOS ---
+    # --- 2. TABLA DE ESTADOS ---
     y = height - 170
-
-
-    # NUEVA ESTRUCTURA DE DIAGNÓSTICO DETALLADO
     items = [
         ("--- SISTEMA DE FRENOS ---", ""),
         ("Freno Delantero", moto.get('freno_del')),
@@ -320,7 +364,6 @@ def generar_pdf(placa):
     ]
 
     for nombre, estado in items:
-        # Si es un título de sección (los que tienen ---)
         if "---" in nombre:
             y -= 10
             c.setFillColor(colors.HexColor("#D5D8DC"))
@@ -331,15 +374,12 @@ def generar_pdf(placa):
             y -= 20
             continue
 
-        # Dibujar nombre del ítem
         c.setFillColor(colors.black)
         c.setFont("Helvetica", 10)
         c.drawString(50, y, nombre)
         
-        # LÓGICA DE SEMÁFORO (Colores dinámicos)
         color_celda = colors.white
-        texto_prioridad = "S.D" # Sin Datos
-        
+        texto_prioridad = "S.D"
         if estado == "✅ Óptimo":
             color_celda = colors.lightgreen
             texto_prioridad = "OK - OPTIMO"
@@ -350,69 +390,76 @@ def generar_pdf(placa):
             color_celda = colors.tomato
             texto_prioridad = "CAMBIO URGENTE"
 
-        # Dibujar el cuadro de estado
         c.setFillColor(color_celda)
         c.rect(400, y-5, 120, 15, fill=1)
         c.setFillColor(colors.black)
         c.drawCentredString(460, y, texto_prioridad)
         y -= 20
 
-    # BLOQUE DE RECOMENDACIONES AUTOMÁTICAS
+    # --- 3. RECOMENDACIONES (FIN HOJA 1) ---
     y -= 20
     c.setFont("Helvetica-Bold", 11)
     c.drawString(40, y, "OBSERVACIONES Y RECOMENDACIONES:")
     c.line(40, y-2, 250, y-2)
     y -= 20
     c.setFont("Helvetica-Oblique", 9)
-    
-    # Lógica inteligente de texto
-    recom_txt = "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad."
-    c.drawString(50, y, recom_txt)
+    c.drawString(50, y, "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad.")
 
+    # --- CAPA INTERMEDIA: ANEXO FOTOGRÁFICO Y CIERRE (HOJA 2) ---
+    if ultimas_fotos:
+        c.showPage() # SALTO A HOJA 2
+        c.setFillColor(colors.HexColor("#1B2631"))
+        c.rect(0, height - 50, width, 50, fill=1)
+        c.setFillColor(colors.white)
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(40, height - 35, "EVIDENCIA FOTOGRÁFICA DEL SERVICIO")
+        
+        y_total = height - 250
+        x_foto = 50
+        for idx, nombre_foto in enumerate(ultimas_fotos):
+            ruta_img = os.path.join(CARPETA_FOTOS, nombre_foto)
+            if os.path.exists(ruta_img):
+                c.drawImage(ruta_img, x_foto, y_total, width=240, height=180, preserveAspectRatio=True)
+                x_foto += 270 
+                if (idx + 1) % 2 == 0:
+                    x_foto = 50
+                    y_total -= 220
+                if y_total < 150:
+                    c.showPage()
+                    y_total = height - 100
+        y_final = y_total - 50
+    else:
+        y_final = y - 60 # Si no hay fotos, queda en Hoja 1
 
-    # --- NUEVA INYECCIÓN: RESUMEN DE INVERSIÓN Y PRÓXIMA CITA ---
-    y -= 45
-    # Dibujamos un rectángulo suave de fondo para el resumen
+    # --- RESUMEN DE INVERSIÓN (AL FINAL DE TODO) ---
     c.setFillColor(colors.HexColor("#F2F4F4"))
-    c.rect(40, y-10, 520, 40, fill=1, stroke=0)
-    
+    c.rect(40, y_final-10, 520, 40, fill=1, stroke=0)
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 11)
-    
-    # Formateamos el costo con puntos de miles para que se vea profesional
     ultimo_cobro = moto.get('ultimo_cobro', 0)
     costo_formateado = f"{ultimo_cobro:,.0f}".replace(",", ".")
-    
-    c.drawString(60, y+15, f"VALOR TOTAL DEL SERVICIO: $ {costo_formateado}")
-    
+    c.drawString(60, y_final+15, f"VALOR TOTAL DEL SERVICIO: $ {costo_formateado}")
     c.setFont("Helvetica-Bold", 10)
     c.setFillColor(colors.HexColor("#1B2631"))
     km_prox = moto.get('km_proximo_mantenimiento', '---')
-    c.drawString(60, y, f"SUGERENCIA PRÓXIMA VISITA: {km_prox} KM")
-    # ------------------------------------------------------------
+    c.drawString(60, y_final, f"SUGERENCIA PRÓXIMA VISITA: {km_prox} KM")
 
-    # --- 4. PIE DE PÁGINA: SELLO DE MARCA Y FECHA ---
-    # Definimos la base del footer
+    # --- 4. PIE DE PÁGINA (LOGO Y SELLOS) ---
     y_footer = 30
-
-    # Texto de propiedad (Izquierda)
     c.setFont("Helvetica-Oblique", 8)
     c.setFillColor(colors.grey)
     c.drawString(40, y_footer, "Este reporte es propiedad de MotoTech. Verifique su próximo mantenimiento.")
-
-    # Fecha del reporte (Derecha, arriba del logo)
     c.setFont("Helvetica-Bold", 8)
     c.setFillColor(colors.black)
     c.drawRightString(550, y_footer + 35, f"Fecha de emisión: {fecha_hoy}")
-
-    # Sello de Marca (Derecha inferior)
     ruta_logo = os.path.join(app.root_path, 'static', 'logo.jpg')
     if os.path.exists(ruta_logo):
-        # Ubicación: X=460, Y=y_footer - 10 (bien abajo a la derecha)
         c.drawImage(ruta_logo, 460, y_footer - 10, width=100, preserveAspectRatio=True, mask='auto')
 
     c.save()
     return send_file(nombre_archivo, as_attachment=True)
+
+
 
 if __name__ == '__main__':
     # host='0.0.0.0' abre la conexión para el celular
