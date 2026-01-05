@@ -25,13 +25,6 @@
         ]
       }
     ],
-    "estado_aceite": null,
-    "estado_frenos": null,
-    "estado_electrico": null,
-    "estado_kit": null,
-    "estado_clutch": null,
-    "estado_barras": null,
-    "ultimo_cobro": 100000,
     "fecha_entrada": "Previo 2026",
     "freno_del": "✅ Óptimo",
     "freno_tras": "✅ Óptimo",
@@ -59,6 +52,94 @@
     "km_actual": 0,
     "km_proximo_mantenimiento": 2500,
     "telefono": "",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "SN001A",
+    "dueño": "Santiago",
+    "moto": "Gixxer 150",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3175684157",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "AL002M",
+    "dueño": "Alejandro Motato",
+    "moto": "Apache 180",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3241612979",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JS003C",
+    "dueño": "Josué",
+    "moto": "Por Definir",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 0,
+    "telefono": "3215857501",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "MH004D",
+    "dueño": "Mateo Hernández",
+    "moto": "Discover 125",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "309888747",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JL005G",
+    "dueño": "Joel",
+    "moto": "Gixxer 150",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3115448878",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "SM006K",
+    "dueño": "Sami",
+    "moto": "Kymco Agility",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3177133975",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "AG007N",
+    "dueño": "Andrés Goyes",
+    "moto": "AKT NKD",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "306445026",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "MC008B",
+    "dueño": "Marcos",
+    "moto": "CB110",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3185481946",
     "historial": [],
     "Mantenimientos": [],
     "fecha_entrada": "2026-01-05"
