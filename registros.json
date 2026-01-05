@@ -107,41 +107,4 @@
     "km_actual": 0,
     "km_proximo_mantenimiento": 3000,
     "telefono": "3115448878",
-    "historial": [],
-    "Mantenimientos": [],
-    "fecha_entrada": "2026-01-05"
-  },
-  {
-    "placa": "SM006K",
-    "dueño": "Sami",
-    "moto": "Kymco Agility",
-    "km_actual": 0,
-    "km_proximo_mantenimiento": 3000,
-    "telefono": "3177133975",
-    "historial": [],
-    "Mantenimientos": [],
-    "fecha_entrada": "2026-01-05"
-  },
-  {
-    "placa": "AG007N",
-    "dueño": "Andrés Goyes",
-    "moto": "AKT NKD",
-    "km_actual": 0,
-    "km_proximo_mantenimiento": 3000,
-    "telefono": "306445026",
-    "historial": [],
-    "Mantenimientos": [],
-    "fecha_entrada": "2026-01-05"
-  },
-  {
-    "placa": "MC008B",
-    "dueño": "Marcos",
-    "moto": "CB110",
-    "km_actual": 0,
-    "km_proximo_mantenimiento": 3000,
-    "telefono": "3185481946",
-    "historial": [],
-    "Mantenimientos": [],
-    "fecha_entrada": "2026-01-05"
-  }
-]
+    "hist
