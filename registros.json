@@ -7,32 +7,8 @@
     "km_proximo_mantenimiento": 15200,
     "telefono": "3172710844",
     "historial": [],
-    "Mantenimientos": [
-      {
-        "Fecha": "",
-        "KM": 25000,
-        "Descripcion": "revision general",
-        "Costo": 20000
-      },
-      {
-        "Fecha": "",
-        "KM": 27000,
-        "Descripcion": "mantenimiento basico",
-        "Costo": 100000,
-        "Fotos": [
-          "MT101A_20260103_231843_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
-          "MT101A_20260103_231843_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
-        ]
-      }
-    ],
-    "fecha_entrada": "Previo 2026",
-    "freno_del": "✅ Óptimo",
-    "freno_tras": "✅ Óptimo",
-    "liq_frenos": "✅ Óptimo",
-    "lavado_carburador": "✅ Óptimo",
-    "filtro_bujia": "✅ Óptimo",
-    "engrase_tijera": "✅ Óptimo",
-    "mantenimiento_guayas": "✅ Óptimo"
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
   },
   {
     "placa": "VBN789",
@@ -107,4 +83,261 @@
     "km_actual": 0,
     "km_proximo_mantenimiento": 3000,
     "telefono": "3115448878",
-    "hist
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "SM006K",
+    "dueño": "Sami",
+    "moto": "Kymco Agility",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3177133975",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "AG007N",
+    "dueño": "Andrés Goyes",
+    "moto": "AKT NKD",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "306445026",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "MC008B",
+    "dueño": "Marcos",
+    "moto": "CB110",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3185481946",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "MA009A",
+    "dueño": "Mauricio",
+    "moto": "AKT 125",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3013873292",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "IS010E",
+    "dueño": "Isaac",
+    "moto": "Eco Deluxe",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3162836795",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "WI011G",
+    "dueño": "William",
+    "moto": "Suzuki GN",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3112542739",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "DU012G",
+    "dueño": "Duván",
+    "moto": "Suzuki Gixxer 150",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3057891291",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "MR013F",
+    "dueño": "Mario",
+    "moto": "CB 125F",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3162472129",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JU014P",
+    "dueño": "Julio",
+    "moto": "Pulsar 180",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "305903595",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JC015R",
+    "dueño": "Javier Cardona",
+    "moto": "AKT R4",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3118959057",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "NA016E",
+    "dueño": "Natan",
+    "moto": "Eco Deluxe",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3158709070",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "DA017C",
+    "dueño": "Daniel",
+    "moto": "CB 160",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3155965263",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "RE018B",
+    "dueño": "Reynaldo",
+    "moto": "BWS",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3163172576",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JP019C",
+    "dueño": "Juan Pablo",
+    "moto": "CB 110",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3104245738",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "EI020H",
+    "dueño": "Either",
+    "moto": "Honda 760",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3216370962",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "CS021F",
+    "dueño": "Julio César",
+    "moto": "AKT Flex",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3045906800",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "AR022V",
+    "dueño": "Ariel",
+    "moto": "Victory One",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3147121656",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "SA023B",
+    "dueño": "Samuel",
+    "moto": "Benelli 180",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3157360689",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "DV024I",
+    "dueño": "David",
+    "moto": "Hero Honda Invicta",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3146632665",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "AL025D",
+    "dueño": "Alex",
+    "moto": "Discover 125",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3244294496",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "FE026S",
+    "dueño": "Felipe",
+    "moto": "Honda Splendor",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3113916567",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "JU027D",
+    "dueño": "Juan",
+    "moto": "AKT Dynamic",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3023176342",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  },
+  {
+    "placa": "EN028F",
+    "dueño": "Enrrique ",
+    "moto": "AKT Flex",
+    "km_actual": 0,
+    "km_proximo_mantenimiento": 3000,
+    "telefono": "3148544259",
+    "historial": [],
+    "Mantenimientos": [],
+    "fecha_entrada": "2026-01-05"
+  }
+]
