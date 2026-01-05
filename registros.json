@@ -9,24 +9,6 @@
         "historial": [],
         "Mantenimientos": [
             {
-                "Fecha": "2025-12-28",
-                "KM": 7000,
-                "Descripcion": "Aceite, eléctrico, mantenimiento General",
-                "Costo": 300000
-            },
-            {
-                "Fecha": "2025-12-30",
-                "KM": 15000,
-                "Descripcion": "mantenimiento electrico y mantenimiento sistema de frenos ",
-                "Costo": 100000
-            },
-            {
-                "Fecha": "",
-                "KM": 25000,
-                "Descripcion": "Revisión general para determinar estado de sistemas mecánicos",
-                "Costo": 0
-            },
-            {
                 "Fecha": "",
                 "KM": 25000,
                 "Descripcion": "revision general",
@@ -55,16 +37,6 @@
                 "KM": 35000,
                 "Descripcion": "Mantenimiento General",
                 "Costo": 220000
-            },
-            {
-                "Fecha": "",
-                "KM": 25000,
-                "Descripcion": "cambio de discos y cambio de cauchos portasprocket",
-                "Costo": 80000,
-                "Fotos": [
-                    "MT101A_20260103_230825_.trashed-1764471803-IMG_20251021_105813900_HDR.jpg",
-                    "MT101A_20260103_230825_.trashed-1764471805-IMG_20251022_160311065.jpg"
-                ]
             },
             {
                 "Fecha": "",

@@ -19,9 +19,6 @@ if not os.path.exists(CARPETA_FOTOS):
     os.makedirs(CARPETA_FOTOS)
 
 
-
-
-
 # **************************************************************
 # BLOQUE 1: CONFIGURACIÓN INICIAL DEL SISTEMA
 # Descripción: Definición de la aplicación Flask, claves de seguridad y rutas de datos.
@@ -29,9 +26,6 @@ if not os.path.exists(CARPETA_FOTOS):
 app = Flask(__name__)
 app.secret_key = "mototech_key_2025"
 RUTA_JSON = 'registros.json'
-
-
-
 
 
 # **************************************************************
@@ -54,9 +48,6 @@ def cargar_registros():
         return []
 
 
-
-
-
 # **************************************************************
 # BLOQUE 3: FUNCIÓN GUARDAR REGISTROS (INTERNA)
 # Descripción: Gestión de escritura y persistencia de datos en el archivo JSON.
@@ -67,9 +58,6 @@ def guardar_registros(registros):
     # Abre el archivo en modo escritura y guarda la lista con sangría (indent) para que sea legible
     with open(RUTA_JSON, 'w', encoding='utf-8') as f:
         json.dump(registros, f, indent=4, ensure_ascii=False)
-
-
-
 
 
 # **************************************************************
@@ -107,9 +95,6 @@ def revisar_mantenimientos_logica():
     return proximos
 
 
-
-
-
 # **************************************************************
 # BLOQUE 5: RUTA PRINCIPAL
 # Descripción: Punto de entrada del software que muestra el panel de control y balance.
@@ -118,13 +103,14 @@ def revisar_mantenimientos_logica():
 def index():
     """Prepara y carga la página principal con tablas, alertas y balance financiero."""
     todos = logic.cargar_registros()
-    
+
     # --- SUB-BLOQUE: GESTIÓN DE EDICIÓN ---
     # Detecta si el usuario hizo clic en "editar" para cargar los datos de una moto en el formulario
     placa_a_editar = request.args.get('editar_placa')
     cliente_a_editar = None
     if placa_a_editar:
-        cliente_a_editar = next((c for c in todos if c.get('placa') == placa_a_editar), None)
+        cliente_a_editar = next(
+            (c for c in todos if c.get('placa') == placa_a_editar), None)
 
     proximos = revisar_mantenimientos_logica()
 
@@ -136,7 +122,7 @@ def index():
             ingresos_totales = 0
     except Exception as e:
         print(f"Error al calcular balance: {e}")
-        ingresos_totales = 0 
+        ingresos_totales = 0
 
     return render_template('index.html',
                            todos=todos,
@@ -144,9 +130,6 @@ def index():
                            cliente_a_editar=cliente_a_editar,
                            placa_a_editar=placa_a_editar,
                            ingresos_totales=ingresos_totales)
-
-
-
 
 
 # **************************************************************
@@ -157,7 +140,7 @@ def index():
 def agregar_cliente_web():
     """Recibe datos del formulario para crear un nuevo cliente o actualizar uno existente."""
     datos = logic.cargar_registros()
-    
+
     # --- SUB-BLOQUE: CAPTURA DE DATOS ---
     # Limpia y convierte los datos recibidos desde los campos del formulario HTML
     placa = request.form.get('placa').upper().strip()
@@ -193,9 +176,6 @@ def agregar_cliente_web():
     return redirect(url_for('index'))
 
 
-
-
-
 # **************************************************************
 # BLOQUE 7: RUTA PARA REGISTRAR TRABAJOS (TALLER)
 # Descripción: Registra los mantenimientos técnicos, captura fotos y estados mecánicos.
@@ -206,10 +186,10 @@ def agregar_mantenimiento_web():
     placa = request.form.get('placa_mantenimiento').upper()
     registros = cargar_registros()
     cliente = next((m for m in registros if m.get('placa') == placa), None)
-    
+
     if cliente:
         costo_actual = int(request.form.get('costo_mantenimiento') or 0)
-        
+
         # --- SUB-BLOQUE: PROCESAMIENTO DE IMÁGENES ---
         # Recorre la lista de fotos subidas, les asigna un nombre único con fecha y las guarda en disco
         lista_fotos = []
@@ -218,7 +198,8 @@ def agregar_mantenimiento_web():
             for foto in archivos:
                 if foto.filename != '':
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    nombre_seguro = secure_filename(f"{placa}_{timestamp}_{foto.filename}")
+                    nombre_seguro = secure_filename(
+                        f"{placa}_{timestamp}_{foto.filename}")
                     foto.save(os.path.join(CARPETA_FOTOS, nombre_seguro))
                     lista_fotos.append(nombre_seguro)
 
@@ -241,7 +222,8 @@ def agregar_mantenimiento_web():
         cliente['lavado_carburador'] = request.form.get('lavado_carburador')
         cliente['filtro_bujia'] = request.form.get('filtro_bujia')
         cliente['engrase_tijera'] = request.form.get('engrase_tijera')
-        cliente['mantenimiento_guayas'] = request.form.get('mantenimiento_guayas')
+        cliente['mantenimiento_guayas'] = request.form.get(
+            'mantenimiento_guayas')
         cliente['estado_frenos'] = request.form.get('frenos')
         cliente['estado_electrico'] = request.form.get('electrico')
         cliente['estado_kit'] = request.form.get('kit_arrastre')
@@ -257,11 +239,8 @@ def agregar_mantenimiento_web():
         cliente['km_actual'] = nuevo['KM']
         guardar_registros(registros)
         flash(f"✅ ¡Éxito! Servicio guardado para {placa}", "warning")
-        
+
     return redirect(url_for('index'))
-
-
-
 
 
 # **************************************************************
@@ -282,9 +261,6 @@ def editar_cliente(placa):
     return redirect(url_for('index'))
 
 
-
-
-
 # **************************************************************
 # BLOQUE 8.5: RUTA PARA GENERACIÓN DE REPORTES PDF
 # Descripción: Crea y descarga el informe técnico en PDF para el cliente.
@@ -293,8 +269,9 @@ def editar_cliente(placa):
 def descargar_reporte(placa):
     """Genera el documento PDF con el diagnóstico técnico y lo envía al navegador."""
     registros = cargar_registros()
-    moto_encontrada = next((m for m in registros if m.get('placa') == placa), None)
-    
+    moto_encontrada = next(
+        (m for m in registros if m.get('placa') == placa), None)
+
     # --- SUB-BLOQUE: GENERACIÓN Y ENVÍO ---
     # Si la moto existe, usa la lógica de reportes para crear el archivo y enviarlo como descarga
     if moto_encontrada:
@@ -302,9 +279,6 @@ def descargar_reporte(placa):
         return send_file(ruta_pdf, as_attachment=True)
     flash("Error: No se pudo generar el reporte.", "danger")
     return redirect(url_for('index'))
-
-
-
 
 
 # **************************************************************
@@ -322,7 +296,31 @@ def eliminar_cliente(placa):
     return redirect(url_for('index'))
 
 
+# **************************************************************
+# BLOQUE 9.5: RUTA PARA ELIMINAR UN SERVICIO ESPECÍFICO
+# Descripción: Borra un solo registro del historial de mantenimientos.
+# **************************************************************
+@app.route('/eliminar_servicio/<placa>/<int:index>')
+def eliminar_servicio(placa, index):
+    """Elimina un mantenimiento específico usando su posición en la lista."""
+    registros = cargar_registros()
+    # 1. Buscamos al cliente por placa
+    cliente = next((m for m in registros if m.get('placa') == placa), None)
 
+    if cliente and 'Mantenimientos' in cliente:
+        try:
+            # 2. Eliminamos el elemento en la posición 'index'
+            # .pop() elimina y devuelve el elemento en esa posición
+            servicio_eliminado = cliente['Mantenimientos'].pop(index)
+
+            # 3. Guardamos los cambios en el JSON
+            guardar_registros(registros)
+            flash(
+                f"🗑️ Servicio del {servicio_eliminado.get('Fecha')} eliminado", "info")
+        except IndexError:
+            flash("❌ No se encontró el registro a eliminar", "danger")
+
+    return redirect(url_for('index'))
 
 
 # **************************************************************
@@ -359,9 +357,6 @@ def enviar_whatsapp(placa):
     telefono_limpio = ''.join(filter(str.isdigit, str(telefono)))
     link_wa = f"https://wa.me/57{telefono_limpio}?text={mensaje_codificado}"
     return redirect(link_wa)
-
-
-
 
 
 # **************************************************************
@@ -438,7 +433,7 @@ def generar_pdf(placa):
         c.setFillColor(colors.black)
         c.setFont("Helvetica", 10)
         c.drawString(50, y, nombre)
-        
+
         # --- LÓGICA DE COLORES DE SEMÁFORO ---
         # Define si el cuadro es Verde (Óptimo), Amarillo (Seguimiento) o Rojo (Urgente)
         color_celda = colors.white
@@ -467,7 +462,8 @@ def generar_pdf(placa):
     c.line(40, y-2, 250, y-2)
     y -= 20
     c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, y, "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad.")
+    c.drawString(
+        50, y, "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad.")
 
     # --- SUB-BLOQUE: ANEXO FOTOGRÁFICO ---
     # Si hay imágenes, crea una nueva página y las organiza en una cuadrícula de 2x2
@@ -483,8 +479,9 @@ def generar_pdf(placa):
         for idx, nombre_foto in enumerate(ultimas_fotos):
             ruta_img = os.path.join(CARPETA_FOTOS, nombre_foto)
             if os.path.exists(ruta_img):
-                c.drawImage(ruta_img, x_foto, y_total, width=240, height=180, preserveAspectRatio=True)
-                x_foto += 270 
+                c.drawImage(ruta_img, x_foto, y_total, width=240,
+                            height=180, preserveAspectRatio=True)
+                x_foto += 270
                 if (idx + 1) % 2 == 0:
                     x_foto = 50
                     y_total -= 220
@@ -503,7 +500,8 @@ def generar_pdf(placa):
     c.setFont("Helvetica-Bold", 11)
     ultimo_cobro = moto.get('ultimo_cobro', 0)
     costo_formateado = f"{ultimo_cobro:,.0f}".replace(",", ".")
-    c.drawString(60, y_final+15, f"VALOR TOTAL DEL SERVICIO: $ {costo_formateado}")
+    c.drawString(60, y_final+15,
+                 f"VALOR TOTAL DEL SERVICIO: $ {costo_formateado}")
     km_prox = moto.get('km_proximo_mantenimiento', '---')
     c.drawString(60, y_final, f"SUGERENCIA PRÓXIMA VISITA: {km_prox} KM")
 
@@ -512,17 +510,16 @@ def generar_pdf(placa):
     y_footer = 30
     c.setFont("Helvetica-Oblique", 8)
     c.setFillColor(colors.grey)
-    c.drawString(40, y_footer, "Este reporte es propiedad de MotoTech. Verifique su próximo mantenimiento.")
+    c.drawString(
+        40, y_footer, "Este reporte es propiedad de MotoTech. Verifique su próximo mantenimiento.")
     c.drawRightString(550, y_footer + 35, f"Fecha de emisión: {fecha_hoy}")
     ruta_logo = os.path.join(app.root_path, 'static', 'logo.jpg')
     if os.path.exists(ruta_logo):
-        c.drawImage(ruta_logo, 460, y_footer - 10, width=100, preserveAspectRatio=True, mask='auto')
+        c.drawImage(ruta_logo, 460, y_footer - 10, width=100,
+                    preserveAspectRatio=True, mask='auto')
 
     c.save()
     return send_file(nombre_archivo, as_attachment=True)
-
-
-
 
 
 # **************************************************************
