@@ -1,15 +1,13 @@
-# Archivos temporales de Python (Basura del sistema)
+# Carpetas de Python (Basura técnica)
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
 venv/
-env/
+.env
 
-# Archivos de configuración de VS Code
-.vscode/
+# Archivos de sistema
+.DS_Store
+Thumbs.db
 
-# Archivos de datos locales (Si NO quieres que tus clientes se suban a la nube)
-registros.json
-
-# Reportes PDF temporales que se generan
-*.pdf
+# Opcional: Si quieres que el software en la nube empiece vacío, 
+# descomenta la siguiente línea poniendo el símbolo # atrás:
+# registros.json

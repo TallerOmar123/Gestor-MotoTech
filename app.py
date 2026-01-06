@@ -149,24 +149,51 @@ def agregar_cliente_web():
     moto = request.form.get('moto')
     km_actual = int(request.form.get('km_actual') or 0)
     km_prox = int(request.form.get('km_prox') or 0)
+    # NUEVOS CAMPOS TÉCNICOS (Hoja de Entrada)
+    notas_ingreso = request.form.get('notas_ingreso')
+    tipo_servicio = request.form.get('tipo_servicio')
+    gasolina = request.form.get('inv_gasolina')
+    
+    # Captura de checkboxes (Devuelven 'on' si están marcados)
+    inv_espejos = "SÍ" if request.form.get('inv_espejos') else "NO"
+    inv_direccionales = "SÍ" if request.form.get('inv_direccionales') else "NO"
+    inv_maletero = "SÍ" if request.form.get('inv_maletero') else "NO"
 
     # --- SUB-BLOQUE: VERIFICACIÓN DE EXISTENCIA ---
     # Busca si la placa ya está registrada para decidir si actualiza o crea un registro nuevo
     cliente_existente = next((c for c in datos if c['placa'] == placa), None)
 
     if cliente_existente:
-        # Si existe, sobreescribe los valores actuales
-        cliente_existente['dueño'] = dueño
-        cliente_existente['telefono'] = telefono
-        cliente_existente['moto'] = moto
-        cliente_existente['km_actual'] = km_actual
-        cliente_existente['km_proximo_mantenimiento'] = km_prox
+        # ACTUALIZACIÓN DE DATOS EXISTENTES
+        cliente_existente.update({
+            "dueño": dueño,
+            "telefono": telefono,
+            "moto": moto,
+            "km_actual": km_actual,
+            "km_proximo_mantenimiento": km_prox,
+            "notas_ingreso": notas_ingreso,
+            "tipo_servicio": tipo_servicio,
+            "gasolina": gasolina,
+            "inventario": {
+                "espejos": inv_espejos,
+                "direccionales": inv_direccionales,
+                "maletero": inv_maletero
+            }
+        })
         flash(f"✅ Datos de {placa} actualizados correctamente", "success")
     else:
-        # Si no existe, crea la estructura inicial para el nuevo cliente
+        # CREACIÓN DE NUEVO REGISTRO
         nuevo_cliente = {
             "placa": placa, "dueño": dueño, "telefono": telefono, "moto": moto,
             "km_actual": km_actual, "km_proximo_mantenimiento": km_prox,
+            "notas_ingreso": notas_ingreso,
+            "tipo_servicio": tipo_servicio,
+            "gasolina": gasolina,
+            "inventario": {
+                "espejos": inv_espejos,
+                "direccionales": inv_direccionales,
+                "maletero": inv_maletero
+            },
             "Mantenimientos": []
         }
         datos.append(nuevo_cliente)
@@ -379,10 +406,19 @@ def generar_pdf(placa):
         ultimo_servicio = moto['Mantenimientos'][-1]
         ultimas_fotos = ultimo_servicio.get('Fotos', [])
 
+
+
+    # 1. Definimos el nombre y la ruta dentro de la carpeta 'static'
     nombre_archivo = f"Reporte_{placa}.pdf"
-    c = canvas.Canvas(nombre_archivo, pagesize=letter)
+    ruta_pdf = os.path.join('static', nombre_archivo)
+    
+    # 2. Iniciamos el Canvas apuntando a esa ruta física
+    c = canvas.Canvas(ruta_pdf, pagesize=letter)
     width, height = letter
     fecha_hoy = datetime.now().strftime("%d/%m/%Y %H:%M")
+
+
+
 
     # --- SUB-BLOQUE: DISEÑO DE ENCABEZADO ---
     # Dibuja el rectángulo azul oscuro y el título del taller en la parte superior
@@ -393,12 +429,34 @@ def generar_pdf(placa):
     c.drawString(40, height - 50, "MOTOTECH - REPORTE TECNICO")
 
     # --- SUB-BLOQUE: DATOS DEL VEHÍCULO ---
-    # Imprime la información del cliente, placa y kilómetros actuales en la cabecera
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 11)
     c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño')}")
     c.drawString(40, height - 130, f"PLACA: {moto.get('placa')}")
     c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual')}")
+
+
+
+# --- NUEVO: CUADRO DE RECEPCIÓN TÉCNICA (INVENTARIO) ---
+    c.setStrokeColor(colors.HexColor("#007bff"))
+    c.rect(340, height - 160, 220, 45, fill=0) # Recuadro azul para inventario
+    
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(345, height - 125, "RECEPCIÓN TÉCNICA:")
+    
+    c.setFont("Helvetica", 8)
+    gas = moto.get('gasolina', 'No registrada')
+    inv = moto.get('inventario', {})
+    esp = inv.get('espejos', 'NO')
+    dir_ = inv.get('direccionales', 'NO')
+    mal = inv.get('maletero', 'NO')
+    
+    c.drawString(345, height - 140, f"⛽ Gasolina: {gas}")
+    c.drawString(345, height - 153, f"🔎 Espejos: {esp} | Luces: {dir_} | Maletero: {mal}")
+
+
+
+
 
     # --- SUB-BLOQUE: DIBUJO DE TABLA TÉCNICA ---
     # Itera sobre la lista de ítems para pintar las barras de estado y colores según la prioridad
@@ -518,8 +576,11 @@ def generar_pdf(placa):
         c.drawImage(ruta_logo, 460, y_footer - 10, width=100,
                     preserveAspectRatio=True, mask='auto')
 
+    # --- Al final de la función ---
     c.save()
-    return send_file(nombre_archivo, as_attachment=True)
+    
+    # Enviamos el archivo desde la ruta donde se guardó
+    return send_file(ruta_pdf, as_attachment=True)
 
 
 # **************************************************************

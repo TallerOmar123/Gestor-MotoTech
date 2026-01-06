@@ -75,6 +75,56 @@
             background-color: #0d6efd;
             color: white;
         }
+
+
+
+
+
+
+        /* --- NUEVO: OPTIMIZACIÓN MÓVIL Y FORMULARIO PROFESIONAL --- */
+        @media (max-width: 768px) {
+            .form-group {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            /* Todo en una columna en móvil */
+            .btn-gestion-movil {
+                width: 100%;
+                margin-bottom: 5px;
+                padding: 10px;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 10px;
+                border-radius: 0;
+            }
+        }
+
+        .check-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .check-item:hover {
+            background: #e9ecef;
+        }
+
+        .seccion-titulo {
+            border-bottom: 2px solid #007bff;
+            color: #007bff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 15px;
+        }
     </style>
 </head>
 
@@ -137,31 +187,99 @@
             </div>
             <div class="card-body">
                 <form action="{{ url_for('agregar_cliente_web') }}" method="POST">
+                    <div class="seccion-titulo fw-bold mb-3"><i class="bi bi-person-vcard"></i> 1. Identificación del
+                        Vehículo y Cliente</div>
                     <div class="form-group">
-                        <div><label class="fw-bold">Placa:</label><input type="text"
-                                class="form-control border-primary fw-bold" name="placa" required
-                                value="{{ placa_a_editar if placa_a_editar else '' }}" {{ 'readonly' if placa_a_editar
-                                else '' }}></div>
-                        <div><label class="fw-bold">Dueño:</label><input type="text" class="form-control" name="dueño"
-                                required value="{{ cliente_a_editar.get('dueño', '') if cliente_a_editar else '' }}">
+                        <div>
+                            <label class="fw-bold small text-secondary">Placa:</label>
+                            <input type="text" class="form-control border-primary fw-bold text-uppercase shadow-sm"
+                                name="placa" required value="{{ placa_a_editar if placa_a_editar else '' }}"
+                                {{ 'readonly' if placa_a_editar else '' }} placeholder="ABC-123">
                         </div>
-                        <div><label class="fw-bold">Teléfono:</label><input type="text" class="form-control"
-                                name="telefono"
-                                value="{{ cliente_a_editar.get('telefono', '') if cliente_a_editar else '' }}"></div>
-                        <div><label class="fw-bold">Modelo:</label><input type="text" class="form-control" name="moto"
-                                value="{{ cliente_a_editar.get('moto', '') if cliente_a_editar else '' }}"></div>
-                        <div><label class="fw-bold">KM Actual:</label><input type="number" class="form-control"
-                                name="km_actual" required
-                                value="{{ cliente_a_editar.get('km_actual', '') if cliente_a_editar else '' }}"></div>
-                        <div><label class="fw-bold text-danger">Meta Próx. Servicio:</label><input type="number"
-                                class="form-control border-danger" name="km_prox" required
-                                value="{{ cliente_a_editar.get('km_proximo_mantenimiento', '') if cliente_a_editar else '' }}">
+                        <div>
+                            <label class="fw-bold small text-secondary">Nombre del Propietario:</label>
+                            <input type="text" class="form-control shadow-sm" name="dueño" required
+                                value="{{ cliente_a_editar.get('dueño', '') if cliente_a_editar else '' }}"
+                                placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div>
+                            <label class="fw-bold small text-secondary">Teléfono WhatsApp:</label>
+                            <input type="text" class="form-control shadow-sm" name="telefono"
+                                value="{{ cliente_a_editar.get('telefono', '') if cliente_a_editar else '' }}"
+                                placeholder="3001234567">
+                        </div>
+                        <div>
+                            <label class="fw-bold small text-secondary">Kilometraje Actual:</label>
+                            <input type="number" class="form-control border-warning shadow-sm" name="km_actual" required
+                                value="{{ cliente_a_editar.get('km_actual', '') if cliente_a_editar else '' }}"
+                                placeholder="00000">
                         </div>
                     </div>
-                    <div class="mt-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">💾 GUARDAR</button>
-                        {% if placa_a_editar %}<a href="/" class="btn btn-secondary px-4">CANCELAR</a>{% endif %}
-                    </div>
+
+                    <div class="seccion-titulo fw-bold mb-3 mt-4"><i class="bi bi-clipboard-check"></i> 2. Inventario de
+                        Recepción</div>
+                    <div class="row g-2 bg-light p-3 rounded border">
+                        <div class="col-6 col-md-3">
+                            <div class="check-item">
+                                <input type="checkbox" name="inv_espejos" class="form-check-input" {{ 'checked' if
+                                    cliente_a_editar and cliente_a_editar.get('inventario', {}).get('espejos')=='SÍ'
+                                    else '' }}>
+                                <small>Espejos</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="check-item">
+                                <input type="checkbox" name="inv_direccionales" class="form-check-input" {{ 'checked' if
+                                    cliente_a_editar and cliente_a_editar.get('inventario',
+                                    {}).get('direccionales')=='SÍ' else '' }}>
+                                <small>Luces/Dir.</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="check-item">
+                                <input type="checkbox" name="inv_maletero" class="form-check-input" {{ 'checked' if
+                                    cliente_a_editar and cliente_a_editar.get('inventario', {}).get('maletero')=='SÍ'
+                                    else '' }}>
+                                <small>Maletero</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <select class="form-select form-select-sm border-info" name="inv_gasolina">
+                                {% set gas = cliente_a_editar.get('gasolina', '') if cliente_a_editar else '' %}
+                                <option value="1/4" {{ 'selected' if gas=='1/4' else '' }}>⛽ Nivel: 1/4</option>
+                                <option value="1/2" {{ 'selected' if gas=='1/2' else '' }}>⛽ Nivel: 1/2</option>
+                                <option value="3/4" {{ 'selected' if gas=='3/4' else '' }}>⛽ Nivel: 3/4</option>
+                                <option value="Full" {{ 'selected' if gas=='Full' else '' }}>⛽ Nivel: FULL</option>
+                            </select>
+                        </div>
+                        <div class="seccion-titulo fw-bold mb-3 mt-4"><i class="bi bi-tools"></i> 3. Servicio y
+                            Observaciones</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold small">Tipo de Intervención:</label>
+                                <select class="form-select fw-bold text-primary border-primary" name="tipo_servicio">
+                                    <option value="Mantenimiento General">🛠️ Mantenimiento General</option>
+                                    <option value="Mantenimiento Preventivo">🔍 Mantenimiento Preventivo</option>
+                                    <option value="Reparación Técnica">⚙️ Reparación Técnica</option>
+                                    <option value="Garantía">🎗️ Garantía</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="fw-bold small">Referencia de Moto:</label>
+                                <input type="text" class="form-control" name="moto" placeholder="Ej: Yamaha NMAX 155"
+                                    value="{{ cliente_a_editar.get('moto', '') if cliente_a_editar else '' }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="fw-bold small text-danger">Observaciones de Ingreso (Rayones o
+                                    fallas):</label>
+                                <textarea class="form-control shadow-sm" name="notas_ingreso" rows="2"
+                                    placeholder="Describa el estado visual...">{{ cliente_a_editar.get('notas_ingreso', '') if cliente_a_editar else '' }}</textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">💾 GUARDAR</button>
+                            {% if placa_a_editar %}<a href="/" class="btn btn-secondary px-4">CANCELAR</a>{% endif %}
+                        </div>
                 </form>
             </div>
         </div>
