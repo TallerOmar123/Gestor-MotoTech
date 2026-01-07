@@ -15,11 +15,47 @@
         "dueño": "Juan González",
         "moto": "AKT NKD 125",
         "km_actual": 456,
-        "km_proximo_mantenimiento": 3000,
+        "km_proximo_mantenimiento": 0,
         "telefono": "",
         "historial": [],
-        "Mantenimientos": [],
-        "fecha_entrada": "2026-01-05"
+        "Mantenimientos": [
+            {
+                "Fecha": "",
+                "KM": 456,
+                "Descripcion": "Mantenimiento General",
+                "Costo": 220000,
+                "Fotos": [
+                    "VBN789_20260107_061704_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
+                    "VBN789_20260107_061704_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
+                ]
+            }
+        ],
+        "fecha_entrada": "2026-01-05",
+        "estado_aceite": null,
+        "freno_del": "✅ Óptimo",
+        "freno_tras": "✅ Óptimo",
+        "liq_frenos": "✅ Óptimo",
+        "lavado_carburador": "✅ Óptimo",
+        "filtro_bujia": "⚠️ Pronto Cambio",
+        "engrase_tijera": "✅ Óptimo",
+        "mantenimiento_guayas": "✅ Óptimo",
+        "estado_frenos": null,
+        "estado_electrico": null,
+        "estado_kit": null,
+        "estado_clutch": null,
+        "estado_barras": null,
+        "ultimo_cobro": 220000,
+        "notas_ingreso": "",
+        "tipo_servicio": "Mantenimiento General",
+        "gasolina": "1/4",
+        "inventario": {
+            "espejos": "NO",
+            "direccionales": "NO",
+            "maletero": "NO"
+        },
+        "detalle_repuestos": "",
+        "valor_total_repuestos": "",
+        "foto_factura": "FACTURA_VBN789_IMG_20240401_104741005.jpg"
     },
     {
         "placa": "WR20G",
@@ -388,6 +424,7 @@
         "estado_kit": null,
         "estado_clutch": null,
         "estado_barras": null,
-        "ultimo_cobro": 200000
+        "ultimo_cobro": 200000,
+        "fecha_entrada": "Previo 2026"
     }
 ]

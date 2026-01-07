@@ -1,31 +1,37 @@
 # **************************************************************
-# BLOQUE 0: IMPORTACIÓN DE BIBLIOTECAS
-# Descripción: Carga de módulos necesarios para web, archivos, PDF y fechas.
+# BLOQUE 0: CONFIGURACIÓN INTEGRAL DEL SISTEMA
+# Descripción: Configuración ÚNICA de Flask y carpetas.
 # **************************************************************
+
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file
 import json
 import urllib.parse
+import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
-import os
-from datetime import datetime
 import logic
-from werkzeug.utils import secure_filename
 
-# Configuración de carpeta para fotos
-CARPETA_FOTOS = os.path.join('static', 'fotos_mantenimiento')
-if not os.path.exists(CARPETA_FOTOS):
-    os.makedirs(CARPETA_FOTOS)
-
-
-# **************************************************************
-# BLOQUE 1: CONFIGURACIÓN INICIAL DEL SISTEMA
-# Descripción: Definición de la aplicación Flask, claves de seguridad y rutas de datos.
-# **************************************************************
+# 1. INSTANCIA ÚNICA DE LA APLICACIÓN
+# (Asegúrate de que esta sea la ÚNICA vez que aparece app = Flask en todo tu código)
 app = Flask(__name__)
 app.secret_key = "mototech_key_2025"
 RUTA_JSON = 'registros.json'
+
+# 2. DEFINICIÓN DE RUTAS FISICAS
+CARPETA_FACTURAS = os.path.join('static', 'facturas')
+CARPETA_FOTOS = os.path.join('static', 'fotos_mantenimiento')
+
+# 3. CREACIÓN DE CARPETAS SI NO EXISTEN
+for carpeta in [CARPETA_FACTURAS, CARPETA_FOTOS]:
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+
+# 4. CARGAR CONFIGURACIÓN EN LA APP (Para evitar el KeyError)
+app.config['UPLOAD_FOLDER'] = CARPETA_FACTURAS
+
 
 
 # **************************************************************
@@ -153,6 +159,22 @@ def agregar_cliente_web():
     notas_ingreso = request.form.get('notas_ingreso')
     tipo_servicio = request.form.get('tipo_servicio')
     gasolina = request.form.get('inv_gasolina')
+
+
+    # --- NUEVOS CAMPOS DE LIQUIDACIÓN ---
+    detalle_repuestos = request.form.get('detalle_repuestos')
+    valor_total_repuestos = request.form.get('valor_total_repuestos')
+    
+    # Procesar la Foto de la Factura
+    foto_f = request.files.get('foto_factura')
+    nombre_foto_factura = ""
+    
+    if foto_f and foto_f.filename != '':
+        nombre_foto_factura = secure_filename(f"FACTURA_{placa}_{foto_f.filename}")
+        foto_f.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_foto_factura))
+
+
+
     
     # Captura de checkboxes (Devuelven 'on' si están marcados)
     inv_espejos = "SÍ" if request.form.get('inv_espejos') else "NO"
@@ -178,7 +200,10 @@ def agregar_cliente_web():
                 "espejos": inv_espejos,
                 "direccionales": inv_direccionales,
                 "maletero": inv_maletero
-            }
+            },
+            "detalle_repuestos": detalle_repuestos,
+            "valor_total_repuestos": valor_total_repuestos,
+            "foto_factura": nombre_foto_factura
         })
         flash(f"✅ Datos de {placa} actualizados correctamente", "success")
     else:
@@ -194,6 +219,9 @@ def agregar_cliente_web():
                 "direccionales": inv_direccionales,
                 "maletero": inv_maletero
             },
+            "detalle_repuestos": detalle_repuestos,
+            "valor_total_repuestos": valor_total_repuestos,
+            "foto_factura": nombre_foto_factura,
             "Mantenimientos": []
         }
         datos.append(nuevo_cliente)
@@ -522,34 +550,102 @@ def generar_pdf(placa):
     c.setFont("Helvetica-Oblique", 9)
     c.drawString(
         50, y, "Se recomienda realizar los cambios marcados como URGENTE para garantizar su seguridad.")
+    
+
+   
+    # --- NUEVO: SECCIÓN DE LIQUIDACIÓN DE REPUESTOS ---
+    y -= 40
+    c.setStrokeColor(colors.black)
+    c.setFillColor(colors.HexColor("#EBEDEF"))
+    c.rect(40, y-45, 520, 55, fill=1) # Fondo gris claro
+    
+    c.setFillColor(colors.black)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(50, y, "LIQUIDACIÓN DE REPUESTOS / INSUMOS:")
+    
+    c.setFont("Helvetica", 9)
+    detalle = moto.get('detalle_repuestos', 'No se registraron repuestos detallados.')
+    valor_rep = moto.get('valor_total_repuestos', '0')
+    
+    # Dibujar detalle y valor
+    c.drawString(50, y-15, f"Detalle: {detalle}")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(50, y-30, f"Total Repuestos: $ {valor_rep}")
+
+    # Si hay una foto de factura, mencionarla
+    if moto.get('foto_factura'):
+        c.setFont("Helvetica-Oblique", 8)
+        c.drawString(400, y-30, "Ver soporte de factura en anexo.")
+    
+
+
+
+
 
     # --- SUB-BLOQUE: ANEXO FOTOGRÁFICO ---
-    # Si hay imágenes, crea una nueva página y las organiza en una cuadrícula de 2x2
+    # Descripción: Genera una nueva página con la factura y las fotos del servicio.
+    # **************************************************************
+        
+    # 1. Preparar lista de fotos con su ruta correcta
+    fotos_para_anexo = []
+
+    # Agregar la factura de primera si existe
+    foto_factura = moto.get('foto_factura')
+    if foto_factura:
+        fotos_para_anexo.append({'archivo': foto_factura, 'ruta': CARPETA_FACTURAS, 'titulo': 'SOPORTE DE FACTURA'})
+
+    # Agregar fotos del mantenimiento
     if ultimas_fotos:
+        for f in ultimas_fotos:
+            # Evitamos duplicar si la factura ya estaba en ultimas_fotos
+            if f != foto_factura:
+                fotos_para_anexo.append({'archivo': f, 'ruta': CARPETA_FOTOS, 'titulo': 'EVIDENCIA TÉCNICA'})
+
+    # 2. Dibujar en el PDF si hay algo que mostrar
+    if fotos_para_anexo:
         c.showPage()
         c.setFillColor(colors.HexColor("#1B2631"))
         c.rect(0, height - 50, width, 50, fill=1)
         c.setFillColor(colors.white)
         c.setFont("Helvetica-Bold", 16)
-        c.drawString(40, height - 35, "EVIDENCIA FOTOGRÁFICA DEL SERVICIO")
+        c.drawString(40, height - 35, "ANEXO: FACTURACIÓN Y EVIDENCIAS")
+        
         y_total = height - 250
         x_foto = 50
-        for idx, nombre_foto in enumerate(ultimas_fotos):
-            ruta_img = os.path.join(CARPETA_FOTOS, nombre_foto)
+        
+        for idx, item in enumerate(fotos_para_anexo):
+            ruta_img = os.path.join(item['ruta'], item['archivo'])
+            
             if os.path.exists(ruta_img):
-                c.drawImage(ruta_img, x_foto, y_total, width=240,
-                            height=180, preserveAspectRatio=True)
+                # Dibujar etiqueta sobre la foto
+                c.setFillColor(colors.black)
+                c.setFont("Helvetica-Bold", 8)
+                c.drawString(x_foto, y_total + 185, item['titulo'])
+                
+                # Dibujar la imagen
+                c.drawImage(ruta_img, x_foto, y_total, width=240, height=180, preserveAspectRatio=True)
+                
+                # Lógica de cuadrícula 2x2
                 x_foto += 270
                 if (idx + 1) % 2 == 0:
                     x_foto = 50
                     y_total -= 220
-                if y_total < 150:
+                
+                # Nueva página si se acaba el espacio
+                if y_total < 100:
                     c.showPage()
-                    y_total = height - 100
+                    y_total = height - 150
+                    x_foto = 50
+                    
         y_final = y_total - 50
     else:
         y_final = y - 60
 
+
+
+
+
+        
     # --- SUB-BLOQUE: TOTALES Y CIERRE ---
     # Muestra el precio final cobrado y la sugerencia de kilometraje para la próxima visita
     c.setFillColor(colors.HexColor("#F2F4F4"))
