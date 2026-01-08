@@ -47,15 +47,17 @@
         "ultimo_cobro": 220000,
         "notas_ingreso": "",
         "tipo_servicio": "Mantenimiento General",
-        "gasolina": "1/4",
+        "gasolina": "1/2",
         "inventario": {
-            "espejos": "NO",
-            "direccionales": "NO",
-            "maletero": "NO"
+            "espejos": "SÍ",
+            "direccionales": "SÍ",
+            "maletero": "SÍ"
         },
         "detalle_repuestos": "",
-        "valor_total_repuestos": "",
-        "foto_factura": "FACTURA_VBN789_IMG_20240401_104741005.jpg"
+        "valor_total_repuestos": "0",
+        "foto_factura": "",
+        "foto_repuestos_viejos": "VIEJOS_VBN789_.trashed-1764471802-IMG_20250830_140346989.jpg",
+        "recomendaciones_finales": "para la próxima visita será necesario un cambio de kit de arrastre"
     },
     {
         "placa": "WR20G",

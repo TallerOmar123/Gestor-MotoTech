@@ -161,17 +161,31 @@ def agregar_cliente_web():
     gasolina = request.form.get('inv_gasolina')
 
 
-    # --- NUEVOS CAMPOS DE LIQUIDACIÓN ---
-    detalle_repuestos = request.form.get('detalle_repuestos')
-    valor_total_repuestos = request.form.get('valor_total_repuestos')
+    # NUEVOS CAMPOS: Recomendaciones y Repuestos Viejos
+    recomendaciones_finales = request.form.get('recomendaciones_finales', '')
     
-    # Procesar la Foto de la Factura
+    foto_rv = request.files.get('foto_repuestos_viejos')
+    nombre_foto_repuestos = ""
+    
+    if foto_rv and foto_rv.filename != '':
+        nombre_seguro_rv = secure_filename(f"VIEJOS_{placa}_{foto_rv.filename}")
+        foto_rv.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_seguro_rv))
+        nombre_foto_repuestos = nombre_seguro_rv
+
+
+
+
+
+    # Captura de detalles de repuestos y foto de factura
+    detalle_repuestos = request.form.get('detalle_repuestos', '')
+    valor_total_repuestos = request.form.get('valor_total_repuestos', '0')
+    
     foto_f = request.files.get('foto_factura')
     nombre_foto_factura = ""
-    
     if foto_f and foto_f.filename != '':
         nombre_foto_factura = secure_filename(f"FACTURA_{placa}_{foto_f.filename}")
         foto_f.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_foto_factura))
+
 
 
 
@@ -203,7 +217,9 @@ def agregar_cliente_web():
             },
             "detalle_repuestos": detalle_repuestos,
             "valor_total_repuestos": valor_total_repuestos,
-            "foto_factura": nombre_foto_factura
+            "foto_factura": nombre_foto_factura,
+            "foto_repuestos_viejos": nombre_foto_repuestos,
+            "recomendaciones_finales": recomendaciones_finales
         })
         flash(f"✅ Datos de {placa} actualizados correctamente", "success")
     else:
@@ -222,6 +238,8 @@ def agregar_cliente_web():
             "detalle_repuestos": detalle_repuestos,
             "valor_total_repuestos": valor_total_repuestos,
             "foto_factura": nombre_foto_factura,
+            "foto_repuestos_viejos": nombre_foto_repuestos,
+            "recomendaciones_finales": recomendaciones_finales,
             "Mantenimientos": []
         }
         datos.append(nuevo_cliente)
@@ -396,15 +414,28 @@ def enviar_whatsapp(placa):
     cobro = moto.get('ultimo_cobro', 0)
     cobro_formateado = f"{cobro:,.0f}".replace(",", ".")
 
-    # --- SUB-BLOQUE: MENSAJE Y LINK ---
-    # Codifica el texto para que sea compatible con una URL y limpia el número de teléfono
+# --- SUB-BLOQUE: CONSTRUCCIÓN DE MENSAJE PROFESIONAL ---
     texto = (
         f"✅ *MOTOTECH - MOTO LISTA*\n\n"
-        f"Hola *{moto.get('dueño')}*,\n"
-        f"Le informamos que el servicio técnico de su moto placa *{moto.get('placa')}* ha finalizado con éxito.\n\n"
-        f"💰 *VALOR A PAGAR:* ${cobro_formateado}\n"
-        f"📄 *REPORTE TÉCNICO:* Su informe detallado en PDF ya está disponible.\n\n"
-        "Ya puede pasar al taller por su vehículo. ¡Gracias por elegirnos! 🏍️"
+        f"Hola *{moto.get('dueño')}* 👋,\n\n"
+        f"Te informamos que el servicio de tu moto placa *{moto.get('placa')}* ha finalizado con éxito.\n\n"
+        f"🛠️ *Resumen del Servicio:*\n"
+        f"• Tipo: {moto.get('tipo_servicio', 'Mantenimiento')}\n"
+        f"• KM Actual: {moto.get('km_actual')}\n"
+        f"• Próxima Visita: {moto.get('km_proximo_mantenimiento')} KM\n\n"
+        f"📂 *Evidencias Técnicas:*\n"
+        f"Ya hemos generado tu **Reporte Técnico en PDF** que incluye el diagnóstico detallado, "
+        f"fotos del proceso y soporte de repuestos. ¡Te lo entregaremos al recibir tu moto!\n\n"
+    )
+
+    # Inyectar nota técnica si existe
+    recom = moto.get('recomendaciones_finales')
+    if recom:
+        texto += f"📌 *Nota del Técnico:* {recom}\n\n"
+
+    texto += (
+        f"💰 *VALOR TOTAL:* ${cobro_formateado}\n\n"
+        "Ya puedes pasar al taller por tu vehículo. ¡Gracias por confiar en MotoTech! 🏍️"
     )
 
     mensaje_codificado = urllib.parse.quote(texto)
@@ -586,60 +617,69 @@ def generar_pdf(placa):
     # Descripción: Genera una nueva página con la factura y las fotos del servicio.
     # **************************************************************
         
-    # 1. Preparar lista de fotos con su ruta correcta
+    # 1. Preparar lista de fotos con su ruta y categoría
     fotos_para_anexo = []
-
-    # Agregar la factura de primera si existe
-    foto_factura = moto.get('foto_factura')
-    if foto_factura:
-        fotos_para_anexo.append({'archivo': foto_factura, 'ruta': CARPETA_FACTURAS, 'titulo': 'SOPORTE DE FACTURA'})
-
-    # Agregar fotos del mantenimiento
+    
+    # Factura
+    f_factura = moto.get('foto_factura')
+    if f_factura:
+        fotos_para_anexo.append({'archivo': f_factura, 'ruta': CARPETA_FACTURAS, 'titulo': 'SOPORTE DE FACTURA'})
+    
+    # Repuestos Viejos
+    f_viejos = moto.get('foto_repuestos_viejos')
+    if f_viejos:
+        fotos_para_anexo.append({'archivo': f_viejos, 'ruta': CARPETA_FACTURAS, 'titulo': 'REPUESTOS SUSTITUIDOS (VIEJOS)'})
+    
+    # Fotos Mantenimiento
     if ultimas_fotos:
         for f in ultimas_fotos:
-            # Evitamos duplicar si la factura ya estaba en ultimas_fotos
-            if f != foto_factura:
+            if f not in [f_factura, f_viejos]:
                 fotos_para_anexo.append({'archivo': f, 'ruta': CARPETA_FOTOS, 'titulo': 'EVIDENCIA TÉCNICA'})
 
-    # 2. Dibujar en el PDF si hay algo que mostrar
+    # 2. Dibujar Fotos
     if fotos_para_anexo:
         c.showPage()
+        # Encabezado del Anexo
         c.setFillColor(colors.HexColor("#1B2631"))
         c.rect(0, height - 50, width, 50, fill=1)
         c.setFillColor(colors.white)
         c.setFont("Helvetica-Bold", 16)
-        c.drawString(40, height - 35, "ANEXO: FACTURACIÓN Y EVIDENCIAS")
+        c.drawString(40, height - 35, "ANEXO: EVIDENCIAS Y FACTURACIÓN")
         
         y_total = height - 250
         x_foto = 50
         
         for idx, item in enumerate(fotos_para_anexo):
             ruta_img = os.path.join(item['ruta'], item['archivo'])
-            
             if os.path.exists(ruta_img):
-                # Dibujar etiqueta sobre la foto
                 c.setFillColor(colors.black)
                 c.setFont("Helvetica-Bold", 8)
                 c.drawString(x_foto, y_total + 185, item['titulo'])
-                
-                # Dibujar la imagen
                 c.drawImage(ruta_img, x_foto, y_total, width=240, height=180, preserveAspectRatio=True)
                 
-                # Lógica de cuadrícula 2x2
                 x_foto += 270
                 if (idx + 1) % 2 == 0:
                     x_foto = 50
                     y_total -= 220
-                
-                # Nueva página si se acaba el espacio
                 if y_total < 100:
                     c.showPage()
                     y_total = height - 150
-                    x_foto = 50
-                    
-        y_final = y_total - 50
+        y_final = y_total - 40
     else:
         y_final = y - 60
+
+    # 3. Dibujar Recomendaciones Finales
+    recom_txt = moto.get('recomendaciones_finales', '').strip()
+    if recom_txt:
+        if y_final < 100: c.showPage(); y_final = height - 50
+        c.setStrokeColor(colors.red)
+        c.setFillColor(colors.HexColor("#FEF9E7"))
+        c.rect(40, y_final - 40, 520, 50, fill=1)
+        c.setFillColor(colors.black)
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(50, y_final - 5, "📌 RECOMENDACIONES TÉCNICAS ADICIONALES:")
+        c.setFont("Helvetica-Oblique", 9)
+        c.drawString(50, y_final - 25, recom_txt)
 
 
 
