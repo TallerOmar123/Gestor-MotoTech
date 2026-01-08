@@ -385,48 +385,5 @@
         "historial": [],
         "Mantenimientos": [],
         "fecha_entrada": "2026-01-05"
-    },
-    {
-        "placa": "GTY78G",
-        "dueño": "Angelica Granados",
-        "telefono": "3125567766",
-        "moto": "Akt tt 200",
-        "km_actual": 25000,
-        "km_proximo_mantenimiento": 0,
-        "notas_ingreso": "Direccion torcida y rayones en el tanque",
-        "tipo_servicio": "Mantenimiento General",
-        "gasolina": "1/2",
-        "inventario": {
-            "espejos": "SÍ",
-            "direccionales": "SÍ",
-            "maletero": "SÍ"
-        },
-        "Mantenimientos": [
-            {
-                "Fecha": "",
-                "KM": 25000,
-                "Descripcion": "mantenimiento general",
-                "Costo": 200000,
-                "Fotos": [
-                    "GTY78G_20260105_212649_WhatsApp_Image_2026-01-03_at_11.14.12_PM_1.jpeg",
-                    "GTY78G_20260105_212649_WhatsApp_Image_2026-01-03_at_11.14.12_PM.jpeg"
-                ]
-            }
-        ],
-        "estado_aceite": null,
-        "freno_del": "✅ Óptimo",
-        "freno_tras": "✅ Óptimo",
-        "liq_frenos": "✅ Óptimo",
-        "lavado_carburador": "✅ Óptimo",
-        "filtro_bujia": "✅ Óptimo",
-        "engrase_tijera": "✅ Óptimo",
-        "mantenimiento_guayas": "✅ Óptimo",
-        "estado_frenos": null,
-        "estado_electrico": null,
-        "estado_kit": null,
-        "estado_clutch": null,
-        "estado_barras": null,
-        "ultimo_cobro": 200000,
-        "fecha_entrada": "Previo 2026"
     }
 ]

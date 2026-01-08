@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/browser-image-compression/2.0.2/browser-image-compression.min.js"></script>
 
 
 
@@ -305,7 +307,7 @@
                                     rows="2"
                                     placeholder="Ej: Pendiente cambio de kit de arrastre en la próxima visita.">{{ cliente_a_editar.get('recomendaciones_finales', '') if cliente_a_editar else '' }}</textarea>
                             </div>
-                        </div>
+                        </div> 
                         <div class="mt-4 d-flex gap-2">
                             <button type="submit" class="btn btn-primary w-100 fw-bold">💾 GUARDAR</button>
                             {% if placa_a_editar %}<a href="/" class="btn btn-secondary px-4">CANCELAR</a>{% endif %}
@@ -313,6 +315,33 @@
                 </form>
             </div>
         </div>
+
+        <script>
+            const opcionesSencillas = { maxSizeMB: 0.5, maxWidthOrHeight: 1200, useWebWorker: true };
+
+            async function optimizarArchivoUnico(input) {
+                if (input.files.length === 0) return;
+                const file = input.files[0];
+                const label = input.previousElementSibling;
+                const textoOriginal = label.innerHTML;
+                
+                try {
+                    label.innerHTML = "⏳ Optimizado...";
+                    const compressed = await imageCompression(file, opcionesSencillas);
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(new File([compressed], file.name, { type: file.type }));
+                    input.files = dataTransfer.files;
+                    label.innerHTML = textoOriginal + " ✅";
+                } catch (e) {
+                    console.error(e);
+                    label.innerHTML = textoOriginal + " ❌";
+                }
+            }
+
+            // Activamos la escucha en los dos campos específicos
+            document.querySelector('input[name="foto_factura"]').addEventListener('change', function() { optimizarArchivoUnico(this); });
+            document.querySelector('input[name="foto_repuestos_viejos"]').addEventListener('change', function() { optimizarArchivoUnico(this); });
+        </script>
 
 
 
@@ -514,22 +543,50 @@
                             </div>
 
                             <script>
-                                // Vista previa rápida para ver qué fotos estás subiendo
-                                document.getElementById('inputFotos').addEventListener('change', function (e) {
-                                    const preview = document.getElementById('preview');
-                                    preview.innerHTML = '';
-                                    Array.from(this.files).forEach(file => {
-                                        const reader = new FileReader();
-                                        reader.onload = function (ex) {
-                                            const img = document.createElement('img');
-                                            img.src = ex.target.result;
-                                            img.style.width = '60px';
-                                            img.style.height = '60px';
-                                            img.className = 'rounded border object-fit-cover';
-                                            preview.appendChild(img);
+                                const inputFotos = document.getElementById('inputFotos');
+                                const preview = document.getElementById('preview');
+
+                                inputFotos.addEventListener('change', async function (e) {
+                                    // Mostrar aviso de carga
+                                    preview.innerHTML = '<div class="alert alert-info py-1 px-2 small w-100">⏳ Optimizando fotos...</div>';
+
+                                    const dataTransfer = new DataTransfer();
+                                    const opciones = {
+                                        maxSizeMB: 0.4,          // Fotos de 400KB máximo
+                                        maxWidthOrHeight: 1024,   // Resolución HD
+                                        useWebWorker: true
+                                    };
+
+                                    const files = Array.from(this.files);
+
+                                    for (let file of files) {
+                                        try {
+                                            // Comprimir
+                                            const compressedFile = await imageCompression(file, opciones);
+                                            const newFile = new File([compressedFile], file.name, { type: file.type });
+                                            dataTransfer.items.add(newFile);
+
+                                            // Crear miniatura
+                                            const reader = new FileReader();
+                                            reader.onload = function (ex) {
+                                                const img = document.createElement('img');
+                                                img.src = ex.target.result;
+                                                img.style.width = '60px';
+                                                img.style.height = '60px';
+                                                img.className = 'rounded border object-fit-cover me-1 mb-1';
+                                                preview.appendChild(img);
+                                            }
+                                            reader.readAsDataURL(newFile);
+
+                                        } catch (error) {
+                                            console.error("Error en compresión:", error);
                                         }
-                                        reader.readAsDataURL(file);
-                                    });
+                                    }
+
+                                    // Actualizar el input con los archivos ya comprimidos
+                                    this.files = dataTransfer.files;
+                                    const alertMsg = preview.querySelector('.alert');
+                                    if (alertMsg) alertMsg.innerHTML = "✅ Listas (" + this.files.length + ")";
                                 });
                             </script>
                         </div>
