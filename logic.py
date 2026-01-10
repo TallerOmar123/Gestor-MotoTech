@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 
 # --- CONFIGURACIÓN DE MONGODB ---
-MONGO_URI = "mongodb+srv://admin:Um0beOYH491rOH9E@cluster0.mongodb.net/mototech_db?retryWrites=true&w=majority"
+MONGO_URI = "mongodb+srv://admin:sereunprogramador999@mototech-db.c9q0e7q.mongodb.net/?retryWrites=true&w=majority&appName=MotoTech-DB"
 client = MongoClient(MONGO_URI)
 db = client['mototech_db']
 coleccion_clientes = db['clientes']
