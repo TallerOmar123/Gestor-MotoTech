@@ -35,12 +35,28 @@ MARGEN_ALERTA = 5000
 
 
 # -----------------------------------------------------------
-# FUNCIONES DE PERSISTENCIA
+# FUNCIONES DE PERSISTENCIA (MODO NUBE)
 # -----------------------------------------------------------
 
+def cargar_registros():
+    """Trae todos los clientes de la nube de MongoDB."""
+    try:
+        # Importante: Usamos la coleccion que definimos arriba
+        datos = list(coleccion_clientes.find({}, {'_id': 0}))
+        
+        # Reparación de campos para compatibilidad
+        for moto in datos:
+            if 'fecha_entrada' not in moto:
+                moto['fecha_entrada'] = "Previo 2026"
+            if 'Mantenimientos' not in moto:
+                moto['Mantenimientos'] = []
+        return datos
+    except Exception as e:
+        print(f"Error al cargar desde MongoDB (Logic): {e}")
+        return []
 
 def guardar_registros(registros):
-    """Actualiza la base de datos en la nube (Sincronización Total)."""
+    """Actualiza la base de datos en la nube."""
     try:
         for cliente in registros:
             coleccion_clientes.replace_one(
@@ -52,29 +68,6 @@ def guardar_registros(registros):
     except Exception as e:
         print(f"Error al guardar en MongoDB (Logic): {e}")
         return False
-
-
-
-
-
-def guardar_registros(registros):
-    """Guarda la lista de registros en el JSON."""
-    # --- SUB-BLOQUE: ESCRITURA SEGURA ---
-    # Intenta abrir el archivo en modo escritura con codificación UTF-8 para soportar caracteres especiales.
-    try:
-        with open(ARCHIVO, 'w', encoding='utf-8') as file:
-            # --- SUB-BLOQUE: SERIALIZACIÓN ---
-            # Convierte los objetos de Python a texto JSON con indentación para facilitar auditorías manuales.
-            json.dump(registros, file, indent=4, ensure_ascii=False)
-        return True
-        
-    # --- SUB-BLOQUE: GESTIÓN DE FALLOS DE DISCO ---
-    # Informa si hubo un problema físico o de permisos al intentar guardar la información.
-    except Exception as e:
-        print(f"Error al guardar: {e}")
-        return False
-
-
 
 
 
