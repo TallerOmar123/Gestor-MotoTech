@@ -1,11 +1,19 @@
 # **************************************************************
 # BLOQUE: IMPORTS EXISTENTES
 # **************************************************************
-import json
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
+from pymongo import MongoClient
+
+
+# --- CONFIGURACIÓN DE MONGODB ---
+MONGO_URI = "mongodb+srv://admin:Um0beOYH491rOH9E@cluster0.mongodb.net/mototech_db?retryWrites=true&w=majority"
+client = MongoClient(MONGO_URI)
+db = client['mototech_db']
+coleccion_clientes = db['clientes']
+
 
 
 
@@ -31,39 +39,19 @@ MARGEN_ALERTA = 5000
 # -----------------------------------------------------------
 
 
-def cargar_registros():
-    # Definimos la ruta dentro de la función por seguridad
-    ruta = 'registros.json'
-    
-    # --- SUB-BLOQUE: VALIDACIÓN DE ARCHIVO ---
-    # Se asegura de que el archivo exista y sea legible antes de intentar procesarlo.
+def guardar_registros(registros):
+    """Actualiza la base de datos en la nube (Sincronización Total)."""
     try:
-        import os
-        import json
-        if os.path.exists(ruta):
-            with open(ruta, 'r', encoding='utf-8') as f:
-                datos = json.load(f)
-                
-                # --- SUB-BLOQUE: NORMALIZACIÓN DE FORMATO ---
-                # Verifica que los datos cargados sean una lista; de lo contrario, limpia la base de datos.
-                if not isinstance(datos, list):
-                    return []
-                
-                # --- SUB-BLOQUE: REPARACIÓN Y COMPATIBILIDAD ---
-                # Recorre cada objeto para inyectar campos faltantes, evitando errores en versiones nuevas del software.
-                for moto in datos:
-                    if 'fecha_entrada' not in moto:
-                        moto['fecha_entrada'] = "Previo 2026"
-                    if 'Mantenimientos' not in moto:
-                        moto['Mantenimientos'] = []
-                return datos
-        return []
-        
-    # --- SUB-BLOQUE: CONTROL DE EXCEPCIONES ---
-    # Captura errores de lectura o sintaxis en el JSON y retorna una lista segura para que la app no colapse.
+        for cliente in registros:
+            coleccion_clientes.replace_one(
+                {'placa': cliente['placa']}, 
+                cliente, 
+                upsert=True
+            )
+        return True
     except Exception as e:
-        print(f"Error al cargar registros: {e}")
-        return []
+        print(f"Error al guardar en MongoDB (Logic): {e}")
+        return False
 
 
 

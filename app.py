@@ -14,6 +14,20 @@ from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 import logic
 
+
+
+from pymongo import MongoClient
+
+# --- CONFIGURACIÓN DE MONGODB ---
+# Reemplaza TU_CONTRASEÑA con la contraseña real que copiaste de Atlas
+MONGO_URI = "mongodb+srv://admin:Um0beOYH491rOH9E@cluster0.mongodb.net/?retryWrites=True&w=majority"
+client = MongoClient(MONGO_URI)
+db = client['mototech_db']
+coleccion_clientes = db['clientes']
+
+
+
+
 # 1. INSTANCIA ÚNICA DE LA APLICACIÓN
 # (Asegúrate de que esta sea la ÚNICA vez que aparece app = Flask en todo tu código)
 app = Flask(__name__)
@@ -39,18 +53,12 @@ app.config['UPLOAD_FOLDER'] = CARPETA_FACTURAS
 # Descripción: Gestión de lectura del archivo de base de datos JSON.
 # **************************************************************
 def cargar_registros():
-    """Lee el archivo JSON y devuelve la lista de clientes o una lista vacía."""
-    # --- SUB-BLOQUE: INTENTO DE LECTURA ---
-    # Verifica si el archivo existe para abrirlo y cargar los datos como objeto Python
+    """Trae todos los clientes de la nube de MongoDB."""
     try:
-        if os.path.exists(RUTA_JSON):
-            with open(RUTA_JSON, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        return []
-    # --- SUB-BLOQUE: CONTROL DE ERRORES ---
-    # Si el archivo está corrupto o no se puede leer, evita que la app se caiga
+        # Buscamos todos los documentos y los convertimos a una lista
+        return list(coleccion_clientes.find({}, {'_id': 0}))
     except Exception as e:
-        print(f"Error al cargar JSON: {e}")
+        print(f"Error al cargar desde MongoDB: {e}")
         return []
 
 
@@ -59,11 +67,18 @@ def cargar_registros():
 # Descripción: Gestión de escritura y persistencia de datos en el archivo JSON.
 # **************************************************************
 def guardar_registros(registros):
-    """Escribe los datos actualizados en el archivo registros.json con formato legible."""
-    # --- SUB-BLOQUE: ESCRITURA FÍSICA ---
-    # Abre el archivo en modo escritura y guarda la lista con sangría (indent) para que sea legible
-    with open(RUTA_JSON, 'w', encoding='utf-8') as f:
-        json.dump(registros, f, indent=4, ensure_ascii=False)
+    """Actualiza la base de datos en la nube."""
+    try:
+        # Esta función ahora es más inteligente: 
+        # Por cada cliente en tu lista, lo guarda o lo actualiza en la nube.
+        for cliente in registros:
+            coleccion_clientes.replace_one(
+                {'placa': cliente['placa']}, 
+                cliente, 
+                upsert=True
+            )
+    except Exception as e:
+        print(f"Error al guardar en MongoDB: {e}")
 
 
 # **************************************************************
