@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 
+
+<!-- Este bloque se encarga de la Capas de Identidad y Recursos Externos,  -->
+<!-- asegurando que el sistema sea rápido, estético y funcional en cualquier dispositivo. -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor MotoTech 2025</title>
+    <title>Gestor MotoTech 2026</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
 
+    <!-- Este bloque define la identidad visual y la capa de presentación de la plataforma. 
+Utiliza una metodología híbrida entre CSS tradicional y técnicas modernas de Layout 
+(como CSS Grid) para organizar la información de manera eficiente. Su objetivo es 
+transformar un formulario plano en una herramienta de gestión intuitiva, limpia y con 
+jerarquía visual. -->
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -169,7 +181,8 @@
 
 
 
-
+        <!-- este bloque de codigo Mantiene el buscador siempre visible en la parte superior 
+ aunque el usuario baje por la lista de clientes, facilitando el acceso rápido.  -->
         <div class="sticky-search">
             <input type="text" id="buscadorPlaca" placeholder="🔍 BUSCAR CLIENTE O PLACA..."
                 class="form-control form-control-lg border-danger shadow-sm">
@@ -181,6 +194,9 @@
 
 
 
+<!--Este bloque de codigo permite crear registros nuevos o modificar los viejos sin cambiar 
+de página. Registra el estado de la moto (gasolina, espejos) para evitar malentendidos. 
+Centraliza el cobro de repuestos y guarda fotos de las facturas.  -->
         <div class="card mb-5 shadow-sm">
             <div class="card-header {{ 'card-header-edit' if cliente_a_editar else 'bg-dark text-white' }}">
                 <h4 class="mb-0 text-center">{{ '✏️ EDITAR DATOS' if cliente_a_editar else '➕ REGISTRAR MOTO' }}</h4>
@@ -306,7 +322,18 @@
 
 
 
+<!-- este bloque de codigo sirve para Realiza una operación aritmética en tiempo real 
+ dentro del ciclo para determinar exactamente cuántos kilómetros le faltan 
+(o se ha pasado) el vehículo respecto a su próximo servicio. -->
 
+<!-- Utiliza clases dinámicas (moto.get('clase_alerta')) para aplicar estilos CSS 
+(como colores rojos o amarillos) según la gravedad del retraso, permitiendo una 
+identificación visual inmediata. -->
+
+<!-- El enlace de WhatsApp está pre-configurado para abrir una conversación personalizada. 
+Utiliza el filtro urlencode para convertir el texto técnico en un mensaje legible que 
+incluye la placa, el nombre del dueño y los kilómetros de desfase, optimizando el tiempo 
+de respuesta administrativa. -->
         <h3 class="text-danger fw-bold mb-3">🚨 Mantenimientos Urgentes</h3>
         <div class="table-responsive mb-5 shadow-sm rounded">
             <table class="table table-bordered table-alerta align-middle mb-0">
@@ -343,7 +370,20 @@
 
 
 
+<!-- Visualización Estructurada: Organiza toda la información clave (Placa, Dueño, Moto, KM)
+en una tabla responsiva que se adapta a dispositivos móviles y computadoras.
 
+Central de Acciones (Gestión): Concentra todas las herramientas que necesitas para interactuar 
+con el cliente en un solo lugar:
+Documentación: Botón para generar el PDF oficial del servicio.
+
+Comunicación: Acceso rápido para llamar o enviar el reporte técnico por WhatsApp.
+
+Control de Datos: Permite ver el historial técnico, editar datos mal ingresados o eliminar 
+registros bajo confirmación de seguridad.
+
+Interactividad Dinámica: Utiliza funciones de JavaScript (abrirServicio, verHistorial) para 
+interactuar con los datos sin recargar la página necesariamente. -->
         <h3 class="fw-bold mb-3">📋 Clientes Registrados</h3>
         <div class="table-responsive shadow-sm rounded">
             <table class="table table-hover align-middle bg-white mb-0" id="tablaMotos">
@@ -397,6 +437,17 @@
 
 
 
+<!-- Diagnóstico por Semáforo: Permite marcar sistemas (frenos, aceite, etc.) como ✅ Óptimo, 
+ ⚠️ Cambio o 🚨 Urgente, generando un reporte profesional para el cliente.
+
+Hoja de Ruta: Sirve para que el mecánico no olvide revisar puntos clave como la bujía, 
+el filtro de aire o el engrase de la tijera.
+
+Evidencia Multimedia: Permite subir varias fotos del trabajo realizado y verlas de inmediato 
+(vista previa) antes de guardarlas, lo que da seguridad al cliente de que el trabajo se hizo.
+
+Cierre de Orden: Registra los kilómetros finales, el costo del servicio y lo que se le 
+realizó a la moto. -->
 
         <div class="modal fade" id="mantenimientoModal" tabindex="-1">
             <div class="modal-dialog">
@@ -532,6 +583,20 @@
 
 
 
+<!-- Es la Ventana de Historial, cuya función principal es mostrar el pasado mecánico de la 
+ moto seleccionada sin salir de la pantalla principal:
+
+Trazabilidad Técnica: Permite que tú y el cliente vean qué trabajos se hicieron en fechas 
+anteriores, ayudando a diagnosticar fallas recurrentes.
+
+Carga Dinámica: El cuerpo de la tabla (id="tabla_historial_cuerpo") está diseñado para ser 
+llenado automáticamente mediante JavaScript cuando haces clic en el botón de "ver historial".
+
+Control de Gastos: Incluye una columna de costos que permite recordar cuánto ha invertido 
+el cliente en su vehículo a lo largo del tiempo.
+
+Diseño Profesional: Utiliza un tamaño extendido (modal-lg) para que la información se lea 
+cómodamente sin amontonar los datos. -->
 
         <div class="modal fade" id="historialModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -572,6 +637,25 @@
 
 
 
+<!-- Este código es el "cerebro" que hace que la página responda sin tener que recargar todo 
+ a cada momento. Sus funciones clave son:
+
+Buscador Inteligente: Filtra la lista de motos instantáneamente mientras escribes la placa, 
+ocultando lo que no coincide.
+
+Gestión de Modales: Controla cuándo se abren las ventanas de "Nuevo Servicio" y "Historial", 
+asegurándose de que muestren la información correcta de la placa seleccionada.
+
+Seguridad con Estilo (SweetAlert2): En lugar de mensajes aburridos, usa alertas visuales 
+modernas para confirmar si realmente quieres borrar un cliente o un servicio, evitando errores
+accidentales.
+
+Memoria Temporal (localStorage): Tiene una función ingeniosa: si borras un servicio del 
+historial, el sistema "recuerda" abrir el historial automáticamente cuando la página se 
+recargue, para que no pierdas el hilo de lo que estabas haciendo.
+
+Notificaciones (Toasts): Muestra pequeños mensajes flotantes en la esquina superior que te 
+confirman cuando algo se guardó o eliminó con éxito. -->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -748,3 +832,7 @@
                 {% endwith %}
             });
         </script>
+
+</body>
+
+</html>

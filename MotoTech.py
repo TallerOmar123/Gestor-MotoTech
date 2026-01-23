@@ -1,3 +1,18 @@
+#¿Qué funciones cumplen estas librerías?
+#customtkinter (ctk): Es la evolución moderna de Tkinter. Permite que tu aplicación tenga un 
+#aspecto actual (Modo Oscuro/Claro, bordes redondeados, botones estilizados) similar a una 
+#app de Windows 11 o macOS.
+
+#tkinter (ttk, messagebox, simpledialog): Proporciona los componentes base de la interfaz, 
+#como ventanas de alerta para mensajes de error y cuadros para entrada de datos simples.
+
+#json y os: Se encargan de la "memoria" del programa. Permiten guardar y leer la información 
+#de tus clientes en archivos físicos en el computador.
+
+#typing (Dict, Any, Optional): Se utiliza para el Tipado de Datos, lo que hace que tu código 
+#sea más profesional y fácil de depurar al definir exactamente qué tipo de información entra 
+#y sale de cada función.
+
 import customtkinter as ctk
 from tkinter import ttk, messagebox, simpledialog
 import json
@@ -7,6 +22,21 @@ from typing import Dict, Any, Optional
 
 
 
+#🔍 Configuración del Núcleo Operativo
+#Este bloque establece las "reglas del juego" para el funcionamiento automático de tu 
+#aplicación:
+
+#MARGEN_ALERTA (5000 km): Define el ciclo de vida estándar para el mantenimiento preventivo. 
+#El sistema usará este valor como punto de referencia para notificar al cliente que su 
+#servicio está próximo.
+
+#MARGEN_URGENTE (1000 km): Establece el umbral de riesgo. Cuando la diferencia de kilometraje 
+#cae por debajo de este número, el sistema prioriza el registro con alertas visuales 
+#(normalmente resaltado en rojo) debido al riesgo de falla mecánica.
+
+#ARCHIVO_REGISTROS: Centraliza el almacenamiento. Al definirlo como una constante, 
+#facilitas que todo el programa sepa exactamente dónde guardar y leer la base de datos 
+#de clientes, evitando duplicidad de archivos.
 
 # -----------------------------------------------------------
 # 1. LÓGICA DE NEGOCIO Y PERSISTENCIA
@@ -59,6 +89,15 @@ def guardar_registros(registros: Dict[str, Any]) -> bool:
 
 
 
+#🔍 Configuración de Identidad y Entorno
+#set_appearance_mode("System"): Esta instrucción permite que la aplicación sea "consciente" 
+#del entorno del usuario. Si el sistema operativo cambia a Modo Oscuro, la interfaz se 
+#adaptará automáticamente sin necesidad de reiniciar el programa, mejorando la ergonomía visual.
+
+#set_default_color_theme("blue"): Define el ADN visual de la herramienta. El tema azul 
+#establece una jerarquía de colores profesional para botones, interruptores y barras 
+#de progreso, asegurando que la interfaz se sienta moderna y confiable.
+
 # -----------------------------------------------------------
 # 2. CLASE PRINCIPAL DE LA APLICACIÓN (TallerAppProFinal)
 # -----------------------------------------------------------
@@ -67,6 +106,24 @@ ctk.set_default_color_theme("blue")
 
 
 
+
+
+
+
+#🔍 Arquitectura del Constructor (__init__)
+#Este bloque de código es el punto de partida que ensambla toda la aplicación:
+
+#Inicialización de Ventana: Define un espacio de trabajo amplio (1400x750 píxeles) 
+#diseñado para visualizar tablas de datos complejas. El uso de super().__init__() asegura 
+#que todas las herramientas modernas de CTk estén disponibles.
+
+#Gestión de Datos en Memoria: Almacena la base de datos en self.registros_clientes 
+#inmediatamente al abrir el programa. Esto garantiza que la navegación sea instantánea, 
+#ya que los datos están listos en la RAM.
+
+#Diseño Elástico (Layout Manager): Configura el sistema de rejilla (grid_rowconfigure) 
+#para que, si el usuario maximiza la ventana, los componentes (como la tabla de clientes) 
+#se estiren proporcionalmente, evitando espacios vacíos o cortes en la interfaz.
 
 
 class TallerAppProFinal(ctk.CTk):
@@ -89,6 +146,35 @@ class TallerAppProFinal(ctk.CTk):
         self.crear_widgets()
         self.actualizar_vista_registros()
         
+
+
+
+
+
+
+
+
+#🔍 Construcción de la Interfaz Operativa
+#Este bloque define cómo interactúa el usuario con el software:
+
+#Encabezado Corporativo: Utiliza CTkLabel con tipografía escalada para establecer la 
+#identidad visual de la herramienta desde el primer contacto.
+
+#Dashboard de Búsqueda Reactiva: * El uso de self.entry_busqueda.bind("<KeyRelease>", ...) 
+#es clave, ya que activa el filtrado en tiempo real. Cada vez que el usuario suelta una 
+#tecla, la interfaz se actualiza sin necesidad de presionar "Enter".
+
+#El diseño usa un CTkFrame con expansión horizontal (sticky="ew") para que las 
+#herramientas de búsqueda se vean uniformes en cualquier tamaño de pantalla.
+
+#Módulo de Salida Segura: El botón de "Guardar y Salir" está diferenciado cromáticamente 
+#en rojo (fg_color="red"). Esto es una convención de diseño para indicar una acción d
+#definitiva que invoca el método on_closing, garantizando que ningún dato se pierda al 
+#cerrar el programa.
+
+#Matriz de Gestión (CRUD): Prepara un contenedor especializado (frame_botones) 
+#con un sistema de pesos equitativos (weight=1), lo que permite que los botones de 
+#administración se distribuyan perfectamente de forma simétrica.
 
 
 
