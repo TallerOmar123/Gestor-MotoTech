@@ -670,49 +670,52 @@ def generar_pdf(placa):
     c.drawString(50, y-15, f"Detalle: {moto.get('detalle_repuestos', 'N/A')}")
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA ---
-    # Creamos una lista con todas las fotos disponibles (la de factura y las de mantenimientos)
+    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA (SIMPLIFICADO) ---
     todas_las_fotos = []
     
-    # 1. Agregamos la foto de soporte principal si existe
+    # 1. Foto de factura
     if moto.get('foto_factura'):
         todas_las_fotos.append(moto['foto_factura'])
     
-    # 2. Agregamos las fotos del último mantenimiento si existen
+    # 2. Fotos de mantenimiento
     if ultimas_fotos:
-        # Esto suma las dos listas
         todas_las_fotos.extend(ultimas_fotos)
 
     if todas_las_fotos:
-        c.showPage()  # Nueva página para fotos
-        y_foto = height - 80
-        
+        c.showPage()
+        y_foto = height - 60
         c.setFont("Helvetica-Bold", 14)
         c.drawString(40, y_foto, "ANEXO: EVIDENCIA FOTOGRÁFICA")
         y_foto -= 40
 
         for index, img_url in enumerate(todas_las_fotos):
             try:
-                # Verificar si hay espacio en la página, si no, crear otra
+                if not img_url: continue
+                
+                # Control de salto de página
                 if y_foto < 250:
                     c.showPage()
-                    y_foto = height - 80
+                    y_foto = height - 60
                 
-                img = ImageReader(img_url)
-                
-                # Dibujamos la imagen (tamaño ajustado para que quepan varias)
-                # Bajamos el y_foto antes de dibujar para que no se solapen
-                y_foto -= 260 
+                # Dibujar imagen
+                img = ImageReader(img_url.strip())
+                y_foto -= 260
                 c.drawImage(img, 40, y_foto, width=520, height=250, preserveAspectRatio=True)
                 
                 c.setFont("Helvetica-Oblique", 8)
-                c.drawString(40, y_foto - 10, f"Evidencia #{index + 1} - Placa: {placa}")
-                y_foto -= 40 # Espacio entre fotos
+                c.drawString(40, y_foto - 15, f"Evidencia #{index + 1} - Placa: {placa}")
+                y_foto -= 50 # Espacio extra entre fotos
                 
             except Exception as e:
-                print(f"❌ Error al insertar imagen {index} en PDF: {e}")
-                c.drawString(40, y_foto, f"Error al cargar evidencia #{index + 1}")
-                y_foto -= 20
+                print(f"❌ Error crítico en imagen {index}: {e}")
+                c.setFont("Helvetica", 10)
+                c.drawString(40, y_foto - 20, f"No se pudo cargar la imagen {index + 1}")
+                y_foto -= 40
+    else:
+        # Esto nos avisará en el PDF si el sistema cree que NO hay fotos
+        c.showPage()
+        c.setFont("Helvetica", 12)
+        c.drawString(40, height - 100, "No se encontró evidencia fotográfica para este reporte.")
 
     # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
     c.save()
