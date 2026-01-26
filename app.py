@@ -664,28 +664,48 @@ def generar_pdf(placa):
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
     # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA ---
-    # Si hay una foto en Cloudinary, la preparamos para el anexo
+    # Creamos una lista con todas las fotos disponibles (la de factura y las de mantenimientos)
+    todas_las_fotos = []
+    
+    # 1. Agregamos la foto de soporte principal si existe
     if moto.get('foto_factura'):
-        c.showPage() # Creamos una página nueva para las fotos
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(40, height - 50, "ANEXO: EVIDENCIA FOTOGRÁFICA")
+        todas_las_fotos.append(moto['foto_factura'])
+    
+    # 2. Agregamos las fotos del último mantenimiento si existen
+    if ultimas_fotos:
+        # Esto suma las dos listas
+        todas_las_fotos.extend(ultimas_fotos)
+
+    if todas_las_fotos:
+        c.showPage()  # Nueva página para fotos
+        y_foto = height - 80
         
-        try:
-            # CAPA DE COMPATIBILIDAD CLOUDINARY:
-            # Usamos ImageReader para que ReportLab entienda que es una URL
-            img_url = moto['foto_factura']
-            img = ImageReader(img_url)
-            
-            # Dibujamos la imagen centrada
-            # Parámetros: imagen, x, y, ancho, alto
-            c.drawImage(img, 40, height - 400, width=520, preserveAspectRatio=True)
-            
-            c.setFont("Helvetica-Oblique", 10)
-            c.drawString(40, height - 420, f"Soporte digital vinculado a la placa {placa}")
-            
-        except Exception as e:
-            print(f"❌ Error al insertar imagen de Cloudinary en PDF: {e}")
-            c.drawString(40, height - 100, "No se pudo cargar la imagen desde la nube.")
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(40, y_foto, "ANEXO: EVIDENCIA FOTOGRÁFICA")
+        y_foto -= 40
+
+        for index, img_url in enumerate(todas_las_fotos):
+            try:
+                # Verificar si hay espacio en la página, si no, crear otra
+                if y_foto < 250:
+                    c.showPage()
+                    y_foto = height - 80
+                
+                img = ImageReader(img_url)
+                
+                # Dibujamos la imagen (tamaño ajustado para que quepan varias)
+                # Bajamos el y_foto antes de dibujar para que no se solapen
+                y_foto -= 260 
+                c.drawImage(img, 40, y_foto, width=520, height=250, preserveAspectRatio=True)
+                
+                c.setFont("Helvetica-Oblique", 8)
+                c.drawString(40, y_foto - 10, f"Evidencia #{index + 1} - Placa: {placa}")
+                y_foto -= 40 # Espacio entre fotos
+                
+            except Exception as e:
+                print(f"❌ Error al insertar imagen {index} en PDF: {e}")
+                c.drawString(40, y_foto, f"Error al cargar evidencia #{index + 1}")
+                y_foto -= 20
 
     # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
     c.save()

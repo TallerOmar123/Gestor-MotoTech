@@ -547,9 +547,10 @@ realizó a la moto. -->
                             </div>
                             <input type="hidden" name="fecha_mantenimiento" value="{{ today }}">
                             <div class="mt-3 p-3 border rounded bg-white shadow-sm">
-                                <label class="small fw-bold text-dark d-block mb-2">📸 REGISTRO FOTOGRÁFICO:</label>
-                                <input type="file" id="foto_factura" name="foto_factura"
-                                    accept="image/jpeg, image/png, image/jpg" class="form-control">
+                                <label class="small fw-bold text-dark d-block mb-2">📸 REGISTRO FOTOGRÁFICO
+                                    (Galería/Múltiple):</label>
+                                <input type="file" id="foto_factura" name="foto_factura" accept="image/*"
+                                    class="form-control" multiple>
                                 <div id="preview" class="d-flex gap-2 mt-2 overflow-x-auto"></div>
                             </div>
 
