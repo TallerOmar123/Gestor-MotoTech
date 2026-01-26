@@ -14,6 +14,28 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 import logic
+from pymongo import MongoClient
+
+
+
+
+# --- CONFIGURACIÓN DE MONGO ---
+# En Render, usaremos una variable de entorno, pero para probar localmente:
+# Así debe verse tu línea de conexión:
+MONGO_URI = os.getenv('MONGO_URI', "mongodb+srv://admin:sereunprogramador999@mototech-db.c9q0e7q.mongodb.net/?retryWrites=true&w=majority")
+
+try:
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    db = client['MotoTech_Store']
+    motos_col = db['registros']
+    # Esto verifica si la conexión es exitosa al arrancar
+    client.server_info() 
+    print("✅ Conexión a MongoDB Atlas exitosa")
+except Exception as e:
+    print(f"❌ Error de conexión: {e}")
+
+
+
 
 
 # **************************************************************
@@ -45,43 +67,39 @@ app.config['UPLOAD_FOLDER'] = CARPETA_FACTURAS
 
 
 # **************************************************************
-# BLOQUE 2: MOTOR DE PERSISTENCIA DE DATOS (LECTURA)
-# Función: Recupera la información almacenada en el disco duro
-#          y la transforma en datos utilizables por el sistema.
+# BLOQUE 2: GESTOR DE PERSISTENCIA CLOUD (LECTURA)
+# Función: Establece comunicación con MongoDB Atlas para extraer
+#          la información y sincronizarla con el estado local.
 # **************************************************************
 
 def cargar_registros():
-    """Lee el archivo JSON y devuelve la lista de clientes o una lista vacía."""
-
-    # --- SUB-BLOQUE: ACCESO AL ALMACENAMIENTO ---
-    # Intenta localizar y abrir el archivo de registros en formato UTF-8.
+    """Recupera los registros desde MongoDB Atlas."""
     try:
-        if os.path.exists(RUTA_JSON):
-            with open(RUTA_JSON, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        return []
-
-    # --- SUB-BLOQUE: GESTIÓN DE SEGURIDAD Y EXCEPCIONES ---
-    # Captura fallos de lectura o archivos dañados para evitar el cierre de la App.
+        # Traemos todo de la nube, ignorando el campo '_id' interno de Mongo
+        registros = list(motos_col.find({}, {'_id': 0}))
+        return registros
     except Exception as e:
-        print(f"Error crítico en base de datos JSON: {e}")
+        print(f"❌ Error al cargar desde MongoDB: {e}")
         return []
 
 
 # **************************************************************
-# BLOQUE 3: MOTOR DE PERSISTENCIA DE DATOS (ESCRITURA)
-# Función: Graba permanentemente la información en el disco duro,
-#          asegurando que los nuevos registros no se pierdan.
+# BLOQUE 3: MOTOR DE SINCRONIZACIÓN EN LA NUBE (ESCRITURA)
+# Función: Transmite y asegura los datos en el clúster remoto,
+#          garantizando que la información sea persistente y eterna.
 # **************************************************************
 
 def guardar_registros(registros):
-    """Escribe los datos actualizados en el archivo registros.json con formato legible."""
-
-    # --- SUB-BLOQUE: EJECUCIÓN DE GUARDADO ---
-    # Abre el archivo en modo sobreescritura ('w') y organiza los datos
-    # con sangría (indent=4) para que el archivo sea fácil de revisar.
-    with open(RUTA_JSON, 'w', encoding='utf-8') as f:
-        json.dump(registros, f, indent=4, ensure_ascii=False)
+    """Sincroniza la base de datos en la nube."""
+    try:
+        # Borramos el contenido actual y subimos la lista actualizada
+        # Esto mantiene tu lógica de 'sobrescribir' que usabas en el JSON
+        motos_col.delete_many({})
+        if registros:
+            motos_col.insert_many(registros)
+        print("💾 Datos sincronizados en MongoDB Atlas")
+    except Exception as e:
+        print(f"❌ Error al guardar en MongoDB: {e}")
 
 
 # **************************************************************
