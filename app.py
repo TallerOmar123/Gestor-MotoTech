@@ -232,19 +232,27 @@ def agregar_cliente_web():
     valor_total_repuestos = request.form.get('valor_total_repuestos')
 
     # Procesamiento de evidencia física (Foto de la Factura)
-    foto_f = request.files.get('foto_factura')
-    nombre_foto_factura = ""
+foto_f = request.files.get('foto_factura')
+nombre_foto_factura = ""
 
-    if foto_f and foto_f.filename != '':
-        try:
-            # Esta línea hace el envío a la nube
-            upload_result = cloudinary.uploader.upload(foto_f, folder="MotoTech_Facturas")
-            
-            # Aquí guardamos el LINK DE INTERNET en la variable
-            nombre_foto_factura = upload_result['secure_url']
-            print(f"📸 Foto en la nube: {nombre_foto_factura}")
-        except Exception as e:
-            print(f"❌ Error Cloudinary: {e}")
+if foto_f and foto_f.filename != '':
+    try:
+        # --- SUBIDA OPTIMIZADA A LA NUBE ---
+        upload_result = cloudinary.uploader.upload(
+            foto_f, 
+            folder="MotoTech_Facturas",
+            transformation=[
+                {'width': 1000, 'crop': "limit"}, # Limita el ancho a 1000px (suficiente para ver detalles)
+                {'quality': "auto"},              # Comprime la foto inteligentemente sin que se note
+                {'fetch_format': "auto"}          # Convierte a formatos modernos como WebP automáticamente
+            ]
+        )
+        
+        # Aquí guardamos el LINK DE INTERNET optimizado
+        nombre_foto_factura = upload_result['secure_url']
+        print(f"📸 Foto optimizada en la nube: {nombre_foto_factura}")
+    except Exception as e:
+        print(f"❌ Error Cloudinary: {e}")
 
     # Lógica de Checkboxes (Conversión de estado HTML a lenguaje de taller)
     inv_espejos = "SÍ" if request.form.get('inv_espejos') else "NO"
