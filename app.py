@@ -383,7 +383,7 @@ def agregar_mantenimiento_web():
         guardar_registros(registros)
         flash(f"✅ ¡Éxito! Servicio guardado para {placa}", "warning")
 
-    return redirect(url_for('index'))
+        return redirect(url_for('index'))
 
 
 # **************************************************************
