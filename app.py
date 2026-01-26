@@ -672,17 +672,39 @@ def generar_pdf(placa):
     c.drawString(50, y-15, f"Detalle: {moto.get('detalle_repuestos', 'N/A')}")
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA (SIMPLIFICADO) ---
+    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA (MODIFICADO Y LISTO) ---
     todas_las_fotos = []
     
-    # 1. Foto de factura
-    if moto.get('foto_factura'):
-        todas_las_fotos.append(moto['foto_factura'])
+    # 1. Foto de factura / Soporte (La que ya confirmaste que funciona)
+    foto_f = moto.get('foto_factura') or moto.get('foto_soporte') or moto.get('Foto_Factura')
+    if foto_f:
+        todas_las_fotos.append(foto_f)
     
-    # 2. Fotos de mantenimiento
-    if ultimas_fotos:
-        todas_las_fotos.extend(ultimas_fotos)
+    # 2. Fotos de mantenimientos (Búsqueda Blindada)
+    mantenimientos = moto.get('Mantenimientos') or moto.get('mantenimientos') or []
+    if mantenimientos:
+        ultimo_servicio = mantenimientos[-1]
+        
+        # Primero intentamos las rutas conocidas
+        f_manto = ultimo_servicio.get('fotos') or ultimo_servicio.get('Fotos') or ultimo_servicio.get('evidencia')
+        
+        if f_manto:
+            if isinstance(f_manto, list):
+                todas_las_fotos.extend([url.strip() for url in f_manto if url])
+            elif isinstance(f_manto, str):
+                todas_las_fotos.append(f_manto.strip())
+        
+        # Si aún no hay fotos de mantenimiento, escaneamos TODO el registro buscando links
+        else:
+            for clave, valor in ultimo_servicio.items():
+                clave_baja = clave.lower()
+                if 'foto' in clave_baja or 'evidencia' in clave_baja:
+                    if isinstance(valor, list):
+                        todas_las_fotos.extend([str(v).strip() for v in valor if v])
+                    elif isinstance(valor, str) and valor.startswith('http'):
+                        todas_las_fotos.append(valor.strip())
 
+    # --- RENDERIZADO DE PÁGINA ---
     if todas_las_fotos:
         c.showPage()
         y_foto = height - 60
@@ -692,14 +714,15 @@ def generar_pdf(placa):
 
         for index, img_url in enumerate(todas_las_fotos):
             try:
-                if not img_url: continue
+                # Validamos que sea un link real
+                link = str(img_url).strip()
+                if not link or not link.startswith('http'):
+                    continue
                 
-                # --- EL PUENTE DE MEMORIA ---
-                # Descargamos la imagen manualmente antes de dársela al PDF
-                response = requests.get(img_url.strip(), timeout=10)
+                # EL PUENTE DE MEMORIA (Descarga segura)
+                response = requests.get(link, timeout=15)
                 img_data = BytesIO(response.content)
                 img = ImageReader(img_data)
-                # ----------------------------
 
                 if y_foto < 250:
                     c.showPage()
@@ -713,15 +736,15 @@ def generar_pdf(placa):
                 y_foto -= 50 
                 
             except Exception as e:
-                print(f"❌ Error descargando imagen {index}: {e}")
+                print(f"❌ Error en imagen {index}: {e}")
                 c.setFont("Helvetica", 10)
-                c.drawString(40, y_foto - 20, f"Error de conexión con imagen {index + 1}")
+                c.drawString(40, y_foto - 20, f"Error al cargar evidencia {index + 1}")
                 y_foto -= 40
     else:
-        # Esto nos avisará en el PDF si el sistema cree que NO hay fotos
+        # Esto saldrá si la lista de fotos sigue vacía
         c.showPage()
-        c.setFont("Helvetica", 12)
-        c.drawString(40, height - 100, "No se encontró evidencia fotográfica para este reporte.")
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(40, height - 100, "SISTEMA: No se encontraron links de fotos en el registro.")
 
     # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
     c.save()
