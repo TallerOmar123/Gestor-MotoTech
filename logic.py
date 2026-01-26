@@ -6,6 +6,19 @@ import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
+from pymongo import MongoClient
+
+
+
+
+# **************************************************************
+# CONFIGURACIÓN DE NUBE 
+# **************************************************************
+MONGO_URI = os.getenv('MONGO_URI', "mongodb+srv://admin:sereunprogramador999@mototech-db.c9q0e7q.mongodb.net/?retryWrites=true&w=majority")
+client = MongoClient(MONGO_URI)
+db = client['MotoTech-DB']
+motos_col = db['clientes']
+
 
 
 
@@ -26,64 +39,56 @@ MARGEN_ALERTA = 5000
 
 
 
-# -----------------------------------------------------------
-# FUNCIONES DE PERSISTENCIA
-# -----------------------------------------------------------
+# **************************************************************
+# MOTOR DE PERSISTENCIA CLOUD (EXTRACCIÓN Y NORMALIZACIÓN)
+# Función: Sincroniza la base de datos remota con el sistema local,
+#          asegurando la integridad de los campos de mantenimiento.
+# **************************************************************
 
 
 def cargar_registros():
-    # Definimos la ruta dentro de la función por seguridad
-    ruta = 'registros.json'
-    
-    # --- SUB-BLOQUE: VALIDACIÓN DE ARCHIVO ---
-    # Se asegura de que el archivo exista y sea legible antes de intentar procesarlo.
+    """Recupera los registros directamente desde MongoDB Atlas."""
     try:
-        import os
-        import json
-        if os.path.exists(ruta):
-            with open(ruta, 'r', encoding='utf-8') as f:
-                datos = json.load(f)
-                
-                # --- SUB-BLOQUE: NORMALIZACIÓN DE FORMATO ---
-                # Verifica que los datos cargados sean una lista; de lo contrario, limpia la base de datos.
-                if not isinstance(datos, list):
-                    return []
-                
-                # --- SUB-BLOQUE: REPARACIÓN Y COMPATIBILIDAD ---
-                # Recorre cada objeto para inyectar campos faltantes, evitando errores en versiones nuevas del software.
-                for moto in datos:
-                    if 'fecha_entrada' not in moto:
-                        moto['fecha_entrada'] = "Previo 2026"
-                    if 'Mantenimientos' not in moto:
-                        moto['Mantenimientos'] = []
-                return datos
-        return []
+        # Traemos todo de la nube, ignorando el ID interno de Mongo
+        registros = list(motos_col.find({}, {'_id': 0}))
         
-    # --- SUB-BLOQUE: CONTROL DE EXCEPCIONES ---
-    # Captura errores de lectura o sintaxis en el JSON y retorna una lista segura para que la app no colapse.
+        # Mantenemos tu lógica de reparación por si hay datos viejos
+        for moto in registros:
+            if 'fecha_entrada' not in moto:
+                moto['fecha_entrada'] = "Previo 2026"
+            if 'Mantenimientos' not in moto:
+                moto['Mantenimientos'] = []
+        return registros
     except Exception as e:
-        print(f"Error al cargar registros: {e}")
+        print(f"❌ Error al cargar desde MongoDB: {e}")
         return []
 
 
 
+
+
+
+
+
+
+# **************************************************************
+# MOTOR DE PERSISTENCIA CLOUD (ESCRITURA Y SINCRONIZACIÓN)
+# Función: Ejecuta un ciclo de limpieza y actualización masiva en 
+#          la nube para garantizar la integridad del historial.
+# **************************************************************
 
 
 def guardar_registros(registros):
-    """Guarda la lista de registros en el JSON."""
-    # --- SUB-BLOQUE: ESCRITURA SEGURA ---
-    # Intenta abrir el archivo en modo escritura con codificación UTF-8 para soportar caracteres especiales.
+    """Sincroniza la lista completa con la base de datos en la nube."""
     try:
-        with open(ARCHIVO, 'w', encoding='utf-8') as file:
-            # --- SUB-BLOQUE: SERIALIZACIÓN ---
-            # Convierte los objetos de Python a texto JSON con indentación para facilitar auditorías manuales.
-            json.dump(registros, file, indent=4, ensure_ascii=False)
+        # Borramos lo anterior para evitar duplicados y subimos lo nuevo
+        motos_col.delete_many({})
+        if registros:
+            motos_col.insert_many(registros)
+        print("💾 Datos sincronizados en MongoDB Atlas con éxito")
         return True
-        
-    # --- SUB-BLOQUE: GESTIÓN DE FALLOS DE DISCO ---
-    # Informa si hubo un problema físico o de permisos al intentar guardar la información.
     except Exception as e:
-        print(f"Error al guardar: {e}")
+        print(f"❌ Error al guardar en MongoDB: {e}")
         return False
 
 

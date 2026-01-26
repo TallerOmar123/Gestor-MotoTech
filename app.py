@@ -26,8 +26,8 @@ MONGO_URI = os.getenv('MONGO_URI', "mongodb+srv://admin:sereunprogramador999@mot
 
 try:
     client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    db = client['MotoTech_Store']
-    motos_col = db['registros']
+    db = client['MotoTech-DB']
+    motos_col = db['clientes']
     # Esto verifica si la conexión es exitosa al arrancar
     client.server_info() 
     print("✅ Conexión a MongoDB Atlas exitosa")
