@@ -7,6 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from datetime import datetime
 from pymongo import MongoClient
+from reportlab.lib.utils import ImageReader
 
 
 
@@ -62,10 +63,6 @@ def cargar_registros():
     except Exception as e:
         print(f"❌ Error al cargar desde MongoDB: {e}")
         return []
-
-
-
-
 
 
 

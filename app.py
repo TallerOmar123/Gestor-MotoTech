@@ -293,7 +293,7 @@ def agregar_cliente_web():
         datos.append(nuevo_cliente)
         flash(f"🏍️ Moto {placa} registrada con éxito", "success")
 
-        
+
 
     # --- SUB-BLOQUE: CIERRE DE TRANSACCIÓN ---
     # 1. Guardamos los datos en MongoDB Atlas
@@ -657,19 +657,28 @@ def generar_pdf(placa):
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
     # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA ---
-    fotos_para_anexo = []
+    # Si hay una foto en Cloudinary, la preparamos para el anexo
     if moto.get('foto_factura'):
-        fotos_para_anexo.append({'archivo': moto['foto_factura'], 'ruta': CARPETA_FACTURAS, 'titulo': 'SOPORTE DE FACTURA'})
-
-    if ultimas_fotos:
-        for f in ultimas_fotos:
-            if f != moto.get('foto_factura'):
-                fotos_para_anexo.append({'archivo': f, 'ruta': CARPETA_FOTOS, 'titulo': 'EVIDENCIA TÉCNICA'})
-
-    if fotos_para_anexo:
-        c.showPage()
-        # (Lógica de renderizado de imágenes en cuadrícula 2x2...)
-        # [Aquí se mantiene tu lógica original de dibujo de imágenes]
+        c.showPage() # Creamos una página nueva para las fotos
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(40, height - 50, "ANEXO: EVIDENCIA FOTOGRÁFICA")
+        
+        try:
+            # CAPA DE COMPATIBILIDAD CLOUDINARY:
+            # Usamos ImageReader para que ReportLab entienda que es una URL
+            img_url = moto['foto_factura']
+            img = ImageReader(img_url)
+            
+            # Dibujamos la imagen centrada
+            # Parámetros: imagen, x, y, ancho, alto
+            c.drawImage(img, 40, height - 400, width=520, preserveAspectRatio=True)
+            
+            c.setFont("Helvetica-Oblique", 10)
+            c.drawString(40, height - 420, f"Soporte digital vinculado a la placa {placa}")
+            
+        except Exception as e:
+            print(f"❌ Error al insertar imagen de Cloudinary en PDF: {e}")
+            c.drawString(40, height - 100, "No se pudo cargar la imagen desde la nube.")
 
     # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
     c.save()

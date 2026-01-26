@@ -194,7 +194,7 @@ jerarquía visual. -->
 
 
 
-<!--Este bloque de codigo permite crear registros nuevos o modificar los viejos sin cambiar 
+        <!--Este bloque de codigo permite crear registros nuevos o modificar los viejos sin cambiar 
 de página. Registra el estado de la moto (gasolina, espejos) para evitar malentendidos. 
 Centraliza el cobro de repuestos y guarda fotos de las facturas.  -->
         <div class="card mb-5 shadow-sm">
@@ -322,15 +322,15 @@ Centraliza el cobro de repuestos y guarda fotos de las facturas.  -->
 
 
 
-<!-- este bloque de codigo sirve para Realiza una operación aritmética en tiempo real 
+        <!-- este bloque de codigo sirve para Realiza una operación aritmética en tiempo real 
  dentro del ciclo para determinar exactamente cuántos kilómetros le faltan 
 (o se ha pasado) el vehículo respecto a su próximo servicio. -->
 
-<!-- Utiliza clases dinámicas (moto.get('clase_alerta')) para aplicar estilos CSS 
+        <!-- Utiliza clases dinámicas (moto.get('clase_alerta')) para aplicar estilos CSS 
 (como colores rojos o amarillos) según la gravedad del retraso, permitiendo una 
 identificación visual inmediata. -->
 
-<!-- El enlace de WhatsApp está pre-configurado para abrir una conversación personalizada. 
+        <!-- El enlace de WhatsApp está pre-configurado para abrir una conversación personalizada. 
 Utiliza el filtro urlencode para convertir el texto técnico en un mensaje legible que 
 incluye la placa, el nombre del dueño y los kilómetros de desfase, optimizando el tiempo 
 de respuesta administrativa. -->
@@ -370,7 +370,7 @@ de respuesta administrativa. -->
 
 
 
-<!-- Visualización Estructurada: Organiza toda la información clave (Placa, Dueño, Moto, KM)
+        <!-- Visualización Estructurada: Organiza toda la información clave (Placa, Dueño, Moto, KM)
 en una tabla responsiva que se adapta a dispositivos móviles y computadoras.
 
 Central de Acciones (Gestión): Concentra todas las herramientas que necesitas para interactuar 
@@ -437,7 +437,7 @@ interactuar con los datos sin recargar la página necesariamente. -->
 
 
 
-<!-- Diagnóstico por Semáforo: Permite marcar sistemas (frenos, aceite, etc.) como ✅ Óptimo, 
+        <!-- Diagnóstico por Semáforo: Permite marcar sistemas (frenos, aceite, etc.) como ✅ Óptimo, 
  ⚠️ Cambio o 🚨 Urgente, generando un reporte profesional para el cliente.
 
 Hoja de Ruta: Sirve para que el mecánico no olvide revisar puntos clave como la bujía, 
@@ -548,8 +548,8 @@ realizó a la moto. -->
                             <input type="hidden" name="fecha_mantenimiento" value="{{ today }}">
                             <div class="mt-3 p-3 border rounded bg-white shadow-sm">
                                 <label class="small fw-bold text-dark d-block mb-2">📸 REGISTRO FOTOGRÁFICO:</label>
-                                <input type="file" name="fotos" accept="image/*" multiple
-                                    class="form-control form-control-sm" id="inputFotos">
+                                <input type="file" id="foto_factura" name="foto_factura" accept="image/*"
+                                    class="form-control">
                                 <div id="preview" class="d-flex gap-2 mt-2 overflow-x-auto"></div>
                             </div>
 
@@ -583,7 +583,7 @@ realizó a la moto. -->
 
 
 
-<!-- Es la Ventana de Historial, cuya función principal es mostrar el pasado mecánico de la 
+        <!-- Es la Ventana de Historial, cuya función principal es mostrar el pasado mecánico de la 
  moto seleccionada sin salir de la pantalla principal:
 
 Trazabilidad Técnica: Permite que tú y el cliente vean qué trabajos se hicieron en fechas 
@@ -637,7 +637,7 @@ cómodamente sin amontonar los datos. -->
 
 
 
-<!-- Este código es el "cerebro" que hace que la página responda sin tener que recargar todo 
+        <!-- Este código es el "cerebro" que hace que la página responda sin tener que recargar todo 
  a cada momento. Sus funciones clave son:
 
 Buscador Inteligente: Filtra la lista de motos instantáneamente mientras escribes la placa, 
