@@ -670,54 +670,58 @@ def generar_pdf(placa):
     c.drawString(50, y-15, f"Detalle: {moto.get('detalle_repuestos', 'N/A')}")
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA (SIMPLIFICADO) ---
+    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA ---
     todas_las_fotos = []
-    
-    # 1. Foto de factura
     if moto.get('foto_factura'):
         todas_las_fotos.append(moto['foto_factura'])
     
-    # 2. Fotos de mantenimiento
-    if ultimas_fotos:
-        todas_las_fotos.extend(ultimas_fotos)
+    # Usamos .get() con una lista vacía por seguridad total
+    mantenimientos = moto.get('Mantenimientos', [])
+    if mantenimientos:
+        ultimo = mantenimientos[-1]
+        fotos_manto = ultimo.get('fotos') or ultimo.get('Fotos') or []
+        if isinstance(fotos_manto, list):
+            todas_las_fotos.extend(fotos_manto)
+        elif fotos_manto:
+            todas_las_fotos.append(fotos_manto)
 
+    # CREACIÓN FORZADA DE PÁGINA
     if todas_las_fotos:
         c.showPage()
-        y_foto = height - 60
+        # Reiniciamos y_foto a la parte superior de la nueva página
+        y_foto = height - 60 
         c.setFont("Helvetica-Bold", 14)
         c.drawString(40, y_foto, "ANEXO: EVIDENCIA FOTOGRÁFICA")
         y_foto -= 40
 
         for index, img_url in enumerate(todas_las_fotos):
             try:
-                if not img_url: continue
+                if not img_url or str(img_url).strip() == "": continue
                 
-                # Control de salto de página
                 if y_foto < 250:
                     c.showPage()
                     y_foto = height - 60
                 
-                # Dibujar imagen
                 img = ImageReader(img_url.strip())
                 y_foto -= 260
                 c.drawImage(img, 40, y_foto, width=520, height=250, preserveAspectRatio=True)
                 
                 c.setFont("Helvetica-Oblique", 8)
                 c.drawString(40, y_foto - 15, f"Evidencia #{index + 1} - Placa: {placa}")
-                y_foto -= 50 # Espacio extra entre fotos
+                y_foto -= 50 
                 
             except Exception as e:
-                print(f"❌ Error crítico en imagen {index}: {e}")
+                print(f"❌ Error en imagen {index}: {e}")
                 c.setFont("Helvetica", 10)
                 c.drawString(40, y_foto - 20, f"No se pudo cargar la imagen {index + 1}")
                 y_foto -= 40
     else:
-        # Esto nos avisará en el PDF si el sistema cree que NO hay fotos
+        # Si no hay fotos, creamos la página de aviso para confirmar que el código llegó aquí
         c.showPage()
-        c.setFont("Helvetica", 12)
-        c.drawString(40, height - 100, "No se encontró evidencia fotográfica para este reporte.")
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(40, height - 100, "REPORTE DE EVIDENCIA: Sin imágenes registradas.")
 
-    # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
+    # --- CIERRE FINAL ---
     c.save()
     return send_file(ruta_pdf, as_attachment=True)
 
