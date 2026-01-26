@@ -17,6 +17,7 @@ import logic
 from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
+from reportlab.lib.utils import ImageReader
 
 
 
@@ -553,17 +554,14 @@ def generar_pdf(placa):
     if not moto:
         return "Error: Identificador de vehículo no localizado", 404
 
-    # --- DIAGNÓSTICO DE ACTIVOS ---
-    print(f"DEBUG: Generando PDF para placa {placa}")
-    
+    # --- SUB-BLOQUE: PREPARACIÓN DE ACTIVOS MULTIMEDIA ---
     ultimas_fotos = []
     if moto.get('Mantenimientos'):
         ultimo_servicio = moto['Mantenimientos'][-1]
-        print(f"DEBUG: Contenido del último mantenimiento: {ultimo_servicio}") # <--- ESTO NOS DIRÁ QUÉ HAY
-        
+        # Buscamos de forma segura en mayúsculas y minúsculas
         evidencias = ultimo_servicio.get('fotos') or ultimo_servicio.get('Fotos') or []
-        print(f"DEBUG: Fotos encontradas: {evidencias}") # <--- ESTO DIRÁ SI ESTÁN VACÍAS
         
+        # Si es una lista (varias fotos), la usamos. Si es un solo texto (una foto), la metemos en una lista.
         if isinstance(evidencias, list):
             ultimas_fotos = evidencias
         elif evidencias:
