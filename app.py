@@ -15,7 +15,8 @@ from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 import logic
 from pymongo import MongoClient
-
+import cloudinary
+import cloudinary.uploader
 
 
 
@@ -33,6 +34,19 @@ try:
     print("✅ Conexión a MongoDB Atlas exitosa")
 except Exception as e:
     print(f"❌ Error de conexión: {e}")
+
+
+
+
+
+    # --- CONFIGURACIÓN DE CLOUDINARY ---
+# Permite que la app suba imágenes a tu cuenta personal de Cloudinary
+cloudinary.config( 
+  cloud_name = "dk9ionytk", 
+  api_key = "259288167272924", 
+  api_secret = "fg3twnelW_jzLVFas4t2GrDGGgQ",
+  secure = True
+)
 
 
 
@@ -197,7 +211,7 @@ def index():
 @app.route('/agregar_cliente_web', methods=['POST'])
 def agregar_cliente_web():
     """Recibe datos del formulario para crear un nuevo cliente o actualizar uno existente."""
-    datos = logic.cargar_registros()
+    datos = cargar_registros()
 
     # --- SUB-BLOQUE: NORMALIZACIÓN Y CAPTURA DE DATOS ---
     # Transforma entradas a mayúsculas y asegura formatos numéricos para cálculos.
@@ -222,8 +236,15 @@ def agregar_cliente_web():
     nombre_foto_factura = ""
 
     if foto_f and foto_f.filename != '':
-        nombre_foto_factura = secure_filename(f"FACTURA_{placa}_{foto_f.filename}")
-        foto_f.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_foto_factura))
+        try:
+            # Esta línea hace el envío a la nube
+            upload_result = cloudinary.uploader.upload(foto_f, folder="MotoTech_Facturas")
+            
+            # Aquí guardamos el LINK DE INTERNET en la variable
+            nombre_foto_factura = upload_result['secure_url']
+            print(f"📸 Foto en la nube: {nombre_foto_factura}")
+        except Exception as e:
+            print(f"❌ Error Cloudinary: {e}")
 
     # Lógica de Checkboxes (Conversión de estado HTML a lenguaje de taller)
     inv_espejos = "SÍ" if request.form.get('inv_espejos') else "NO"
@@ -231,12 +252,11 @@ def agregar_cliente_web():
     inv_maletero = "SÍ" if request.form.get('inv_maletero') else "NO"
 
     # --- SUB-BLOQUE: BÚSQUEDA Y ACTUALIZACIÓN (UPSERT) ---
-    # Si la placa existe, sobreescribe; si no, crea un nuevo registro.
     cliente_existente = next((c for c in datos if c['placa'] == placa), None)
 
     if cliente_existente:
         # ACTUALIZACIÓN DE HISTORIAL EXISTENTE
-        cliente_existente.update({
+        actualizacion = {
             "dueño": dueño, "telefono": telefono, "moto": moto,
             "km_actual": km_actual, "km_proximo_mantenimiento": km_prox,
             "notas_ingreso": notas_ingreso, "tipo_servicio": tipo_servicio,
@@ -245,10 +265,16 @@ def agregar_cliente_web():
                 "espejos": inv_espejos, "direccionales": inv_direccionales, "maletero": inv_maletero
             },
             "detalle_repuestos": detalle_repuestos,
-            "valor_total_repuestos": valor_total_repuestos,
-            "foto_factura": nombre_foto_factura
-        })
+            "valor_total_repuestos": valor_total_repuestos
+        }
+        
+        # Solo actualizamos el link de la foto si realmente se subió una nueva
+        if nombre_foto_factura:
+            actualizacion["foto_factura"] = nombre_foto_factura
+            
+        cliente_existente.update(actualizacion)
         flash(f"✅ Datos de {placa} actualizados correctamente", "success")
+        
     else:
         # CREACIÓN DE REGISTRO MAESTRO NUEVO
         nuevo_cliente = {
@@ -261,14 +287,22 @@ def agregar_cliente_web():
             },
             "detalle_repuestos": detalle_repuestos,
             "valor_total_repuestos": valor_total_repuestos,
-            "foto_factura": nombre_foto_factura,
+            "foto_factura": nombre_foto_factura, # Aquí se guarda el link de Cloudinary
             "Mantenimientos": []
         }
         datos.append(nuevo_cliente)
         flash(f"🏍️ Moto {placa} registrada con éxito", "success")
 
+        
+
     # --- SUB-BLOQUE: CIERRE DE TRANSACCIÓN ---
-    logic.guardar_registros(datos)
+    # 1. Guardamos los datos en MongoDB Atlas
+    guardar_registros(datos)
+    
+    # 2. Preparamos el mensaje que verá el usuario en pantalla
+    flash("✅ Sincronizado con la Nube correctamente", "success")
+    
+    # 3. Finalizamos la función y volvemos a la página principal
     return redirect(url_for('index'))
 
 
