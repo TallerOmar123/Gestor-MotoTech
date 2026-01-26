@@ -553,12 +553,18 @@ def generar_pdf(placa):
     if not moto:
         return "Error: Identificador de vehículo no localizado", 404
 
-    # --- SUB-BLOQUE: PREPARACIÓN DE ACTIVOS MULTIMEDIA ---
-    # Recupera las evidencias del último servicio para la sección de anexos.
+    # --- SUB-BLOQUE: PREPARACIÓN DE ACTIVOS MULTIMEDIA (CORREGIDO) ---
     ultimas_fotos = []
     if moto.get('Mantenimientos'):
         ultimo_servicio = moto['Mantenimientos'][-1]
-        ultimas_fotos = ultimo_servicio.get('Fotos', [])
+        # Buscamos de forma segura en mayúsculas y minúsculas
+        evidencias = ultimo_servicio.get('fotos') or ultimo_servicio.get('Fotos') or []
+        
+        # Si es una lista (varias fotos), la usamos. Si es un solo texto (una foto), la metemos en una lista.
+        if isinstance(evidencias, list):
+            ultimas_fotos = evidencias
+        elif evidencias:
+            ultimas_fotos = [evidencias]
 
     # Configuración de rutas y lienzo (Canvas)
     nombre_archivo = f"Reporte_{placa}.pdf"
