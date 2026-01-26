@@ -18,6 +18,8 @@ from pymongo import MongoClient
 import cloudinary
 import cloudinary.uploader
 from reportlab.lib.utils import ImageReader
+import requests
+from io import BytesIO
 
 
 
@@ -692,24 +694,28 @@ def generar_pdf(placa):
             try:
                 if not img_url: continue
                 
-                # Control de salto de página
+                # --- EL PUENTE DE MEMORIA ---
+                # Descargamos la imagen manualmente antes de dársela al PDF
+                response = requests.get(img_url.strip(), timeout=10)
+                img_data = BytesIO(response.content)
+                img = ImageReader(img_data)
+                # ----------------------------
+
                 if y_foto < 250:
                     c.showPage()
                     y_foto = height - 60
                 
-                # Dibujar imagen
-                img = ImageReader("https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png")
                 y_foto -= 260
                 c.drawImage(img, 40, y_foto, width=520, height=250, preserveAspectRatio=True)
                 
                 c.setFont("Helvetica-Oblique", 8)
                 c.drawString(40, y_foto - 15, f"Evidencia #{index + 1} - Placa: {placa}")
-                y_foto -= 50 # Espacio extra entre fotos
+                y_foto -= 50 
                 
             except Exception as e:
-                print(f"❌ Error crítico en imagen {index}: {e}")
+                print(f"❌ Error descargando imagen {index}: {e}")
                 c.setFont("Helvetica", 10)
-                c.drawString(40, y_foto - 20, f"No se pudo cargar la imagen {index + 1}")
+                c.drawString(40, y_foto - 20, f"Error de conexión con imagen {index + 1}")
                 y_foto -= 40
     else:
         # Esto nos avisará en el PDF si el sistema cree que NO hay fotos
