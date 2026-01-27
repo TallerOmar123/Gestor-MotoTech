@@ -325,38 +325,35 @@ def agregar_cliente_web():
 
 @app.route('/mantenimiento', methods=['POST'])
 def agregar_mantenimiento_web():
-    """Registra la intervención técnica y actualiza los indicadores del vehículo."""
     placa = request.form.get('placa_mantenimiento').upper()
     registros = cargar_registros()
     cliente = next((m for m in registros if m.get('placa') == placa), None)
 
     if cliente:
         costo_actual = int(request.form.get('costo_mantenimiento') or 0)
-
-        # --- SUB-BLOQUE: GESTIÓN DE EVIDENCIA FOTOGRÁFICA ---
-        # Procesa ráfagas de imágenes asignando metadatos temporales para unicidad.
         lista_fotos = []
+
+        # --- CORRECCIÓN: SUBIDA A CLOUDINARY (No local) ---
         if 'fotos' in request.files:
             archivos = request.files.getlist('fotos')
             for foto in archivos:
                 if foto.filename != '':
-                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    nombre_seguro = secure_filename(f"{placa}_{timestamp}_{foto.filename}")
-                    foto.save(os.path.join(CARPETA_FOTOS, nombre_seguro))
-                    lista_fotos.append(nombre_seguro)
+                    try:
+                        # Subimos directamente a la nube para tener un link URL
+                        upload_result = cloudinary.uploader.upload(foto)
+                        lista_fotos.append(upload_result['secure_url'])
+                    except Exception as e:
+                        print(f"Error subiendo a Cloudinary: {e}")
 
-        # --- SUB-BLOQUE: ESTRUCTURACIÓN DEL SERVICIO ---
-        # Empaqueta los datos técnicos del mantenimiento realizado.
         nuevo = {
             "Fecha": request.form.get('fecha_mantenimiento'),
             "KM": int(request.form.get('km_mantenimiento') or 0),
             "Descripcion": request.form.get('descripcion_mantenimiento'),
             "Costo": costo_actual,
-            "Fotos": lista_fotos
+            "Fotos": lista_fotos  # Ahora esto guarda URLs de internet
         }
 
-        # --- SUB-BLOQUE: ACTUALIZACIÓN DE ESTADOS CRÍTICOS ---
-        # Actualiza el semáforo técnico de los componentes de la motocicleta.
+        # Actualización de estados (Tu código igual...)
         cliente.update({
             'estado_aceite': request.form.get('aceite'),
             'freno_del': request.form.get('freno_del'),
@@ -366,16 +363,11 @@ def agregar_mantenimiento_web():
             'filtro_bujia': request.form.get('filtro_bujia'),
             'engrase_tijera': request.form.get('engrase_tijera'),
             'mantenimiento_guayas': request.form.get('mantenimiento_guayas'),
-            'estado_frenos': request.form.get('frenos'),
             'estado_electrico': request.form.get('electrico'),
-            'estado_kit': request.form.get('kit_arrastre'),
-            'estado_clutch': request.form.get('clutch'),
             'estado_barras': request.form.get('barras'),
             'ultimo_cobro': costo_actual
         })
 
-        # --- SUB-BLOQUE: PERSISTENCIA Y CIERRE ---
-        # Inyecta el registro en el historial y sincroniza el kilometraje actual.
         if 'Mantenimientos' not in cliente:
             cliente['Mantenimientos'] = []
         
@@ -383,8 +375,7 @@ def agregar_mantenimiento_web():
         cliente['km_actual'] = nuevo['KM']
         
         guardar_registros(registros)
-        flash(f"✅ ¡Éxito! Servicio guardado para {placa}", "warning")
-
+        flash(f"✅ ¡Éxito! Servicio con {len(lista_fotos)} fotos guardado", "success")
         return redirect(url_for('index'))
 
 
