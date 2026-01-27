@@ -686,25 +686,31 @@ def generar_pdf(placa):
     else:
         log_debug.append("❌ No se halló link en 'foto_factura' o 'foto_soporte'")
 
-    # 2. RASTREO DE MANTENIMIENTOS (NUEVO TRABAJO)
+    # 2. RASTREO DE MANTENIMIENTOS (EXTRACCIÓN FORZADA)
     mantes = moto.get('Mantenimientos') or moto.get('mantenimientos') or []
     if not mantes:
-        log_debug.append("❌ Lista de Mantenimientos VACÍA en MongoDB")
+        log_debug.append("❌ Lista de Mantenimientos VACÍA")
     else:
         ultimo = mantes[-1]
-        # Esto nos dirá exactamente cómo se llaman los campos en tu base de datos
-        log_debug.append(f"🔎 Campos en el trabajo: {list(ultimo.keys())}")
+        log_debug.append(f"🔎 Campos: {list(ultimo.keys())}")
         
-        f_manto = ultimo.get('fotos') or ultimo.get('Fotos') or ultimo.get('evidencia')
-        if f_manto:
-            if isinstance(f_manto, list):
-                todas_las_fotos.extend([str(u).strip() for u in f_manto if u])
-                log_debug.append(f"✅ Encontradas {len(f_manto)} fotos en lista")
+        # Intentamos capturar el valor tal cual esté, sin filtros
+        valor_fotos = ultimo.get('Fotos')
+        
+        if valor_fotos is not None:
+            log_debug.append(f"❓ Contenido de 'Fotos' es tipo: {type(valor_fotos).__name__}")
+            
+            if isinstance(valor_fotos, list) and len(valor_fotos) > 0:
+                urls = [str(u).strip() for u in valor_fotos if u]
+                todas_las_fotos.extend(urls)
+                log_debug.append(f"✅ ¡ÉXITO! {len(urls)} fotos encontradas")
+            elif isinstance(valor_fotos, str) and valor_fotos.startswith('http'):
+                todas_las_fotos.append(valor_fotos.strip())
+                log_debug.append("✅ 1 foto encontrada (texto)")
             else:
-                todas_las_fotos.append(str(f_manto).strip())
-                log_debug.append("✅ Encontrada 1 foto (texto directo)")
+                log_debug.append(f"⚠️ 'Fotos' existe pero es: '{valor_fotos}'")
         else:
-            log_debug.append("❌ No existe campo 'fotos' o 'Fotos' en el trabajo")
+            log_debug.append("❌ El campo 'Fotos' devolvió None (está nulo)")
 
     # 3. RENDERIZADO Y REPORTE DE ERRORES EN EL PDF
     if todas_las_fotos:
