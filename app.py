@@ -577,6 +577,9 @@ def generar_pdf(placa):
     c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual', '0')}")
     c.drawString(350, height - 125, f"FECHA: {fecha_hoy}")
 
+    # Ahora la tabla empieza justo aquí, bien arriba
+    y = height - 160
+
     # --- MÓDULO DE INVENTARIO DE RECEPCIÓN (NUEVO) ---
     y_inv = height - 145
     c.setStrokeColor(colors.HexColor("#1B2631"))
@@ -664,16 +667,34 @@ def generar_pdf(placa):
     c.setFont("Helvetica-Bold", 11)
     c.drawString(40, y, "DETALLE DE REPUESTOS Y MANO DE OBRA:")
     y -= 20
-    
-    # Dibujamos el detalle manual de repuestos
     c.setFont("Helvetica", 9)
-    detalle_rep = moto.get('detalle_repuestos', 'No hay repuestos registrados')
-    
-    # Si el texto es muy largo, lo limitamos o podrías usar un split simple
-    c.drawString(50, y, f"- {detalle_rep}")
-    y -= 20
+    c.drawString(50, y, f"- {moto.get('detalle_repuestos', 'N/A')}")
+    y -= 15
     c.setFont("Helvetica-Bold", 10)
     c.drawString(50, y, f"VALOR TOTAL: $ {moto.get('valor_total_repuestos', '0')}")
+
+    # --- REUBICACIÓN: INVENTARIO DE RECEPCIÓN (Aquí abajo no estorba) ---
+    y -= 40
+    c.setStrokeColor(colors.HexColor("#1B2631"))
+    c.rect(40, y - 45, 520, 50, fill=0) # Cuadro del inventario
+    
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(50, y - 12, "INVENTARIO DE RECEPCIÓN (REGISTRO DE INGRESO):")
+    
+    c.setFont("Helvetica", 8)
+    inv = moto.get('inventario', {})
+    gas = moto.get('gasolina', 'No registrada')
+    detalles_inv = (
+        f"Espejos: {inv.get('espejos', 'N/A')}  |  "
+        f"Direccionales: {inv.get('direccionales', 'N/A')}  |  "
+        f"Luces: {inv.get('luces', 'N/A')}  |  "
+        f"Maletero: {inv.get('maletero', 'N/A')}"
+    )
+    c.drawString(60, y - 27, detalles_inv)
+    c.drawString(60, y - 39, f"Nivel de Combustible: {gas}")
+    
+    # Actualizamos 'y' para lo que siga (fotos)
+    y -= 70
 
     # --- BLOQUE DE FOTOS DIFERENCIADO ---
     # 1. Foto Soporte / Factura (Página independiente o al inicio)
@@ -730,31 +751,43 @@ def generar_pdf(placa):
 
                 # --- PIE DE PÁGINA Y LOGO FINAL ---
     def dibujar_pie_pagina(canvas_obj):
-        # 1. Dibujar el logo jpg al final (modo sombrita/transparente)
+        # 1. MARCA DE AGUA (LOGO CLARO Y FRESCO)
         try:
-            # Usamos logo.jpg que es el que tienes en el Index
             ruta_logo = os.path.join(os.getcwd(), 'static', 'logo.jpg')
             canvas_obj.saveState()
-            canvas_obj.setFillAlpha(0.15) # Transparencia para que no tape el texto
-            # Lo ubicamos en la esquina inferior derecha
-            canvas_obj.drawImage(ruta_logo, width - 150, 60, width=100, height=100, mask='auto')
+            
+            # Opacidad al 10% (Muy clarito, estilo marca de agua profesional)
+            canvas_obj.setFillAlpha(0.10) 
+            
+            # Ajustamos el tamaño para que se vea "fino": 
+            # Mas ancho (140) que alto (70) para que no se vea "gordito"
+            ancho_logo = 140
+            alto_logo = 70
+            # Posición: Un poco más centrado hacia la derecha pero sutil
+            canvas_obj.drawImage(ruta_logo, width - 180, 45, width=ancho_logo, height=alto_logo, mask='auto')
+            
             canvas_obj.restoreState()
-        except:
+        except Exception:
             pass
 
-        # 2. Línea y Mensajes
+        # 2. LÍNEA DIVISORIA Y TEXTOS
         canvas_obj.setStrokeColor(colors.lightgrey)
-        canvas_obj.line(40, 50, width - 40, 50)
+        canvas_obj.setLineWidth(0.5)
+        canvas_obj.line(40, 50, width - 40, 50) # Línea muy fina
         
-        canvas_obj.setFont("Helvetica-Oblique", 8)
+        # Texto de propiedad (Gris claro y pequeño)
+        canvas_obj.setFont("Helvetica-Oblique", 7)
         canvas_obj.setFillColor(colors.grey)
-        canvas_obj.drawString(40, 35, "Este archivo es propiedad de MOTOTECH. Prohibida su alteración.")
+        canvas_obj.drawString(40, 38, "Este informe técnico es propiedad de MOTOTECH. Registro digital protegido.")
         
+        # Mensaje de agradecimiento (Limpio y centrado)
         canvas_obj.setFont("Helvetica-Bold", 10)
-        canvas_obj.drawCentredString(width / 2, 20, "¡Gracias por confiar en MOTOTECH para el cuidado de tu pasión!")
+        canvas_obj.setFillColor(colors.HexColor("#1B2631")) # El azul oscuro de tu marca
+        canvas_obj.drawCentredString(width / 2, 25, "¡Gracias por elegir a MOTOTECH para cuidar tu pasión!")
 
-    # Llamar a la función antes de guardar
+    # No olvides llamar a la función antes del save
     dibujar_pie_pagina(c)
+    
 
     # --- CIERRE FINAL ---
     
