@@ -703,7 +703,7 @@ def generar_pdf(placa):
         else:
             log_debug.append("❌ El campo 'Fotos' devolvió None (está nulo)")
 
-    # 3. RENDERIZADO Y REPORTE DE ERRORES EN EL PDF
+    # 3. RENDERIZADO Y REPORTE DE ERRORES EN EL PDF (OPTIMIZADO)
     if todas_las_fotos:
         c.showPage()
         y_f = height - 50
@@ -711,7 +711,7 @@ def generar_pdf(placa):
         c.drawString(40, y_f, "ANEXO FOTOGRÁFICO Y DIAGNÓSTICO")
         y_f -= 30
         
-        # Escribir el log de diagnóstico en el PDF (Para ver el error en el celular)
+        # Log de diagnóstico (mantener para supervisión)
         c.setFont("Helvetica", 8)
         c.setFillColor(colors.grey)
         for msg in log_debug:
@@ -726,21 +726,46 @@ def generar_pdf(placa):
                 link = str(url).strip()
                 if not link.startswith('http'): continue
 
-                if y_f < 260:
+                # Control de salto de página (2 fotos por hoja para optimizar espacio)
+                if y_f < 300:
                     c.showPage()
                     y_f = height - 60
                 
-                # Puente de memoria
-                resp = requests.get(link, timeout=15)
-                img_data = BytesIO(resp.content)
-                img = ImageReader(img_data)
+                # Descarga la imagen
+                resp = requests.get(link, timeout=10)
+                img_raw = Image.open(BytesIO(resp.content))
+
+                # --- CORRECCIÓN DE ROTACIÓN (EXIF) ---
+                try:
+                    # Busca la etiqueta de orientación
+                    for orientation in ExifTags.TAGS.keys():
+                        if ExifTags.TAGS[orientation] == 'Orientation': break
+                    
+                    exif = dict(img_raw._getexif().items())
+                    if exif[orientation] == 3: img_raw = img_raw.rotate(180, expand=True)
+                    elif exif[orientation] == 6: img_raw = img_raw.rotate(270, expand=True)
+                    elif exif[orientation] == 8: img_raw = img_raw.rotate(90, expand=True)
+                except Exception:
+                    pass # Si no tiene datos de rotación, continúa normal
+
+                # --- OPTIMIZACIÓN DE PESO (COMPRESIÓN) ---
+                img_buffer = BytesIO()
+                # Convertimos a RGB si es necesario (evita errores con PNG transparentes)
+                if img_raw.mode in ("RGBA", "P"):
+                    img_raw = img_raw.convert("RGB")
                 
-                y_f -= 250
-                c.drawImage(img, 40, y_f, width=500, height=240, preserveAspectRatio=True)
+                # Guardamos con calidad 60 para que sea ultra rápido
+                img_raw.save(img_buffer, format="JPEG", quality=60, optimize=True)
+                img_final = ImageReader(img_buffer)
+
+                # Dibujar imagen (Tamaño ajustado para que quepan 2 por hoja)
+                y_f -= 280
+                c.drawImage(img_final, 50, y_f, width=500, height=280, preserveAspectRatio=True)
                 
                 c.setFont("Helvetica-Oblique", 7)
-                c.drawString(40, y_f - 10, f"Evidencia #{idx+1} - Fuente: Cloudinary")
-                y_f -= 30
+                c.drawString(50, y_f - 12, f"Evidencia #{idx+1} - Procesada con Auto-Rotación")
+                y_f -= 40 # Espacio entre fotos
+                
             except Exception as e:
                 c.setFont("Helvetica", 9)
                 c.drawString(40, y_f, f"⚠️ Error en foto {idx+1}: {str(e)[:60]}")
