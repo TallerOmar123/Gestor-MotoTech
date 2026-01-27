@@ -672,81 +672,94 @@ def generar_pdf(placa):
     c.drawString(50, y-15, f"Detalle: {moto.get('detalle_repuestos', 'N/A')}")
     c.drawString(50, y-30, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- SUB-BLOQUE: ANEXO DE EVIDENCIA FOTOGRÁFICA (MODIFICADO Y LISTO) ---
+    # ==========================================================
+    # --- BLOQUE DE DIAGNÓSTICO DE IMÁGENES (REEMPLAZO) ---
+    # ==========================================================
     todas_las_fotos = []
-    
-    # 1. Foto de factura / Soporte (La que ya confirmaste que funciona)
-    foto_f = moto.get('foto_factura') or moto.get('foto_soporte') or moto.get('Foto_Factura')
-    if foto_f:
-        todas_las_fotos.append(foto_f)
-    
-    # 2. Fotos de mantenimientos (Búsqueda Blindada)
-    mantenimientos = moto.get('Mantenimientos') or moto.get('mantenimientos') or []
-    if mantenimientos:
-        ultimo_servicio = mantenimientos[-1]
+    log_debug = []
+
+    # 1. RASTREO DE FOTO PRINCIPAL
+    foto_p = moto.get('foto_factura') or moto.get('foto_soporte') or moto.get('Foto_Factura')
+    if foto_p:
+        todas_las_fotos.append(foto_p)
+        log_debug.append("✅ Foto principal detectada")
+    else:
+        log_debug.append("❌ No se halló link en 'foto_factura' o 'foto_soporte'")
+
+    # 2. RASTREO DE MANTENIMIENTOS (NUEVO TRABAJO)
+    mantes = moto.get('Mantenimientos') or moto.get('mantenimientos') or []
+    if not mantes:
+        log_debug.append("❌ Lista de Mantenimientos VACÍA en MongoDB")
+    else:
+        ultimo = mantes[-1]
+        # Esto nos dirá exactamente cómo se llaman los campos en tu base de datos
+        log_debug.append(f"🔎 Campos en el trabajo: {list(ultimo.keys())}")
         
-        # Primero intentamos las rutas conocidas
-        f_manto = ultimo_servicio.get('fotos') or ultimo_servicio.get('Fotos') or ultimo_servicio.get('evidencia')
-        
+        f_manto = ultimo.get('fotos') or ultimo.get('Fotos') or ultimo.get('evidencia')
         if f_manto:
             if isinstance(f_manto, list):
-                todas_las_fotos.extend([url.strip() for url in f_manto if url])
-            elif isinstance(f_manto, str):
-                todas_las_fotos.append(f_manto.strip())
-        
-        # Si aún no hay fotos de mantenimiento, escaneamos TODO el registro buscando links
+                todas_las_fotos.extend([str(u).strip() for u in f_manto if u])
+                log_debug.append(f"✅ Encontradas {len(f_manto)} fotos en lista")
+            else:
+                todas_las_fotos.append(str(f_manto).strip())
+                log_debug.append("✅ Encontrada 1 foto (texto directo)")
         else:
-            for clave, valor in ultimo_servicio.items():
-                clave_baja = clave.lower()
-                if 'foto' in clave_baja or 'evidencia' in clave_baja:
-                    if isinstance(valor, list):
-                        todas_las_fotos.extend([str(v).strip() for v in valor if v])
-                    elif isinstance(valor, str) and valor.startswith('http'):
-                        todas_las_fotos.append(valor.strip())
+            log_debug.append("❌ No existe campo 'fotos' o 'Fotos' en el trabajo")
 
-    # --- RENDERIZADO DE PÁGINA ---
+    # 3. RENDERIZADO Y REPORTE DE ERRORES EN EL PDF
     if todas_las_fotos:
         c.showPage()
-        y_foto = height - 60
+        y_f = height - 50
         c.setFont("Helvetica-Bold", 14)
-        c.drawString(40, y_foto, "ANEXO: EVIDENCIA FOTOGRÁFICA")
-        y_foto -= 40
+        c.drawString(40, y_f, "ANEXO FOTOGRÁFICO Y DIAGNÓSTICO")
+        y_f -= 30
+        
+        # Escribir el log de diagnóstico en el PDF (Para ver el error en el celular)
+        c.setFont("Helvetica", 8)
+        c.setFillColor(colors.grey)
+        for msg in log_debug:
+            c.drawString(40, y_f, msg)
+            y_f -= 12
+        
+        c.setFillColor(colors.black)
+        y_f -= 20
 
-        for index, img_url in enumerate(todas_las_fotos):
+        for idx, url in enumerate(todas_las_fotos):
             try:
-                # Validamos que sea un link real
-                link = str(img_url).strip()
-                if not link or not link.startswith('http'):
-                    continue
-                
-                # EL PUENTE DE MEMORIA (Descarga segura)
-                response = requests.get(link, timeout=15)
-                img_data = BytesIO(response.content)
-                img = ImageReader(img_data)
+                link = str(url).strip()
+                if not link.startswith('http'): continue
 
-                if y_foto < 250:
+                if y_f < 260:
                     c.showPage()
-                    y_foto = height - 60
+                    y_f = height - 60
                 
-                y_foto -= 260
-                c.drawImage(img, 40, y_foto, width=520, height=250, preserveAspectRatio=True)
+                # Puente de memoria
+                resp = requests.get(link, timeout=15)
+                img_data = BytesIO(resp.content)
+                img = ImageReader(img_data)
                 
-                c.setFont("Helvetica-Oblique", 8)
-                c.drawString(40, y_foto - 15, f"Evidencia #{index + 1} - Placa: {placa}")
-                y_foto -= 50 
+                y_f -= 250
+                c.drawImage(img, 40, y_f, width=500, height=240, preserveAspectRatio=True)
                 
+                c.setFont("Helvetica-Oblique", 7)
+                c.drawString(40, y_f - 10, f"Evidencia #{idx+1} - Fuente: Cloudinary")
+                y_f -= 30
             except Exception as e:
-                print(f"❌ Error en imagen {index}: {e}")
-                c.setFont("Helvetica", 10)
-                c.drawString(40, y_foto - 20, f"Error al cargar evidencia {index + 1}")
-                y_foto -= 40
+                c.setFont("Helvetica", 9)
+                c.drawString(40, y_f, f"⚠️ Error en foto {idx+1}: {str(e)[:60]}")
+                y_f -= 20
     else:
-        # Esto saldrá si la lista de fotos sigue vacía
+        # PÁGINA DE ERROR SI NO HAY FOTOS
         c.showPage()
         c.setFont("Helvetica-Bold", 12)
-        c.drawString(40, height - 100, "SISTEMA: No se encontraron links de fotos en el registro.")
+        c.drawString(40, height - 80, "INFORME TÉCNICO DE FALLO DE IMÁGENES")
+        y_e = height - 110
+        c.setFont("Helvetica", 10)
+        for msg in log_debug:
+            c.drawString(40, y_e, msg)
+            y_e -= 18
 
-    # --- SUB-BLOQUE: CIERRE Y CONTROL DE EMISIÓN ---
+    # --- CIERRE FINAL ---
     c.save()
     return send_file(ruta_pdf, as_attachment=True)
 
