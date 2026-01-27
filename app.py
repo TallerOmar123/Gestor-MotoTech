@@ -20,6 +20,7 @@ import cloudinary.uploader
 from reportlab.lib.utils import ImageReader
 import requests
 from io import BytesIO
+from PIL import Image, ExifTags
 
 
 
@@ -750,12 +751,18 @@ def generar_pdf(placa):
 
                 # --- OPTIMIZACIÓN DE PESO (COMPRESIÓN) ---
                 img_buffer = BytesIO()
-                # Convertimos a RGB si es necesario (evita errores con PNG transparentes)
+                
+                # 1. Convertir a RGB para evitar errores de formato
                 if img_raw.mode in ("RGBA", "P"):
                     img_raw = img_raw.convert("RGB")
+
+                # 2. REDIMENSIÓN: Si la foto es gigante, la bajamos a un tamaño web (800px)
+                # Esto es lo que realmente hace que el PDF sea rápido.
+                max_size = (800, 800)
+                img_raw.thumbnail(max_size, Image.Resampling.LANCZOS)
                 
-                # Guardamos con calidad 60 para que sea ultra rápido
-                img_raw.save(img_buffer, format="JPEG", quality=60, optimize=True)
+                # 3. COMPRESIÓN: Calidad 50 es el punto dulce entre verse bien y pesar poco
+                img_raw.save(img_buffer, format="JPEG", quality=50, optimize=True)
                 img_final = ImageReader(img_buffer)
 
                 # Dibujar imagen (Tamaño ajustado para que quepan 2 por hoja)
