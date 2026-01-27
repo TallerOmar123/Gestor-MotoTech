@@ -601,7 +601,7 @@ def generar_pdf(placa):
     c.drawString(60, y_inv - 39, f"Nivel de Combustible: {gas}")
 
     # Ajustamos el inicio de la tabla de diagnósticos para que no choque
-    y = height - 260
+    y = height - 280
 
     # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
@@ -728,31 +728,32 @@ def generar_pdf(placa):
                 except: continue
 
 
-                # --- PIE DE PÁGINA PROFESIONAL (BRANDING FINAL) ---
+                # --- PIE DE PÁGINA Y LOGO FINAL ---
     def dibujar_pie_pagina(canvas_obj):
-        canvas_obj.setStrokeColor(colors.lightgrey)
-        canvas_obj.line(40, 50, width - 40, 50) # Línea decorativa inferior
-        
-        # Mensaje de Propiedad y Gracias
-        canvas_obj.setFont("Helvetica-Oblique", 8)
-        canvas_obj.setFillColor(colors.grey)
-        canvas_obj.drawString(40, 35, "Este documento es propiedad de MOTOTECH.")
-        
-        canvas_obj.setFont("Helvetica-Bold", 10)
-        canvas_obj.drawCentredString(width / 2, 20, "¡Gracias por confiar en MOTOTECH para el cuidado de tu Moto!")
-
-        # Logo en "Sombrita" (Marca de agua en la esquina inferior derecha)
-        # Nota: Asegúrate de que 'logo.png' exista en tu carpeta raíz o static
+        # 1. Dibujar el logo jpg al final (modo sombrita/transparente)
         try:
-            ruta_logo = os.path.join(os.getcwd(), 'static', 'logo.png')
+            # Usamos logo.jpg que es el que tienes en el Index
+            ruta_logo = os.path.join(os.getcwd(), 'static', 'logo.jpg')
             canvas_obj.saveState()
-            canvas_obj.setFillAlpha(0.1) # Hace la imagen semitransparente (sombrita)
-            canvas_obj.drawImage(ruta_logo, width - 120, 60, width=80, height=80, mask='auto')
+            canvas_obj.setFillAlpha(0.15) # Transparencia para que no tape el texto
+            # Lo ubicamos en la esquina inferior derecha
+            canvas_obj.drawImage(ruta_logo, width - 150, 60, width=100, height=100, mask='auto')
             canvas_obj.restoreState()
         except:
-            pass # Si no encuentra el logo, no rompe el PDF
+            pass
 
-    # Llamamos a la función del pie de página antes de guardar
+        # 2. Línea y Mensajes
+        canvas_obj.setStrokeColor(colors.lightgrey)
+        canvas_obj.line(40, 50, width - 40, 50)
+        
+        canvas_obj.setFont("Helvetica-Oblique", 8)
+        canvas_obj.setFillColor(colors.grey)
+        canvas_obj.drawString(40, 35, "Este archivo es propiedad de MOTOTECH. Prohibida su alteración.")
+        
+        canvas_obj.setFont("Helvetica-Bold", 10)
+        canvas_obj.drawCentredString(width / 2, 20, "¡Gracias por confiar en MOTOTECH para el cuidado de tu pasión!")
+
+    # Llamar a la función antes de guardar
     dibujar_pie_pagina(c)
 
     # --- CIERRE FINAL ---
