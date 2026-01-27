@@ -577,29 +577,6 @@ def generar_pdf(placa):
     c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual', '0')}")
     c.drawString(350, height - 125, f"FECHA: {fecha_hoy}")
 
-    # Ahora la tabla empieza justo aquí, bien arriba
-    y = height - 160
-
-    
-    c.setFont("Helvetica-Bold", 9)
-    c.drawString(50, y_inv - 12, "INVENTARIO DE RECEPCIÓN (ESTADO DE ENTREGA):")
-    
-    c.setFont("Helvetica", 8)
-    inv = moto.get('inventario', {})
-    gas = moto.get('gasolina', 'No registrada')
-    
-    # Organizamos los ítems en una sola línea para ahorrar espacio
-    detalles_inv = (
-        f"Espejos: {inv.get('espejos', 'N/A')}  |  "
-        f"Direccionales: {inv.get('direccionales', 'N/A')}  |  "
-        f"Luces: {inv.get('luces', 'N/A')}  |  "
-        f"Maletero: {inv.get('maletero', 'N/A')}"
-    )
-    c.drawString(60, y_inv - 27, detalles_inv)
-    c.drawString(60, y_inv - 39, f"Nivel de Combustible: {gas}")
-
-    # Ajustamos el inicio de la tabla de diagnósticos para que no choque
-    y = height - 280
 
     # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
@@ -675,7 +652,7 @@ def generar_pdf(placa):
     
     c.setFont("Helvetica-Bold", 9)
     # Aquí es donde fallaba: cambiamos y_inv por y
-    c.drawString(50, y - 12, "INVENTARIO DE RECEPCIÓN (REGISTRO DE INGRESO):")
+    c.drawString(50, y - 12, "INVENTARIO DE RECEPCIÓN (REGISTRO DE fINGRESO):")
     
     c.setFont("Helvetica", 8)
     inv = moto.get('inventario', {})
