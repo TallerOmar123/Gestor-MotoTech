@@ -580,11 +580,6 @@ def generar_pdf(placa):
     # Ahora la tabla empieza justo aquí, bien arriba
     y = height - 160
 
-    # --- MÓDULO DE INVENTARIO DE RECEPCIÓN (NUEVO) ---
-    y_inv = height - 145
-    c.setStrokeColor(colors.HexColor("#1B2631"))
-    c.setLineWidth(1)
-    c.rect(40, y_inv - 45, 520, 50, fill=0) # Cuadro del inventario
     
     c.setFont("Helvetica-Bold", 9)
     c.drawString(50, y_inv - 12, "INVENTARIO DE RECEPCIÓN (ESTADO DE ENTREGA):")
@@ -751,44 +746,37 @@ def generar_pdf(placa):
 
                 # --- PIE DE PÁGINA Y LOGO FINAL ---
     def dibujar_pie_pagina(canvas_obj):
-        # 1. MARCA DE AGUA (LOGO CLARO Y FRESCO)
+        # --- MARCA DE AGUA (Subida y con más tinta) ---
         try:
             ruta_logo = os.path.join(os.getcwd(), 'static', 'logo.jpg')
             canvas_obj.saveState()
             
-            # Opacidad al 10% (Muy clarito, estilo marca de agua profesional)
-            canvas_obj.setFillAlpha(0.10) 
+            # Opacidad al 18% (Más clarito que el texto, pero se nota más que antes)
+            canvas_obj.setFillAlpha(0.18) 
             
-            # Ajustamos el tamaño para que se vea "fino": 
-            # Mas ancho (140) que alto (70) para que no se vea "gordito"
-            ancho_logo = 140
-            alto_logo = 70
-            # Posición: Un poco más centrado hacia la derecha pero sutil
-            canvas_obj.drawImage(ruta_logo, width - 180, 45, width=ancho_logo, height=alto_logo, mask='auto')
+            # SUBIMOS LA POSICIÓN: El valor '140' lo pone bien arriba del pie de página
+            # El ancho de 160 lo hace ver "fresco" y no apretado
+            canvas_obj.drawImage(ruta_logo, width - 200, 140, width=160, height=85, mask='auto')
             
             canvas_obj.restoreState()
-        except Exception:
+        except:
             pass
 
-        # 2. LÍNEA DIVISORIA Y TEXTOS
+        # --- TEXTOS DE CIERRE ---
         canvas_obj.setStrokeColor(colors.lightgrey)
-        canvas_obj.setLineWidth(0.5)
-        canvas_obj.line(40, 50, width - 40, 50) # Línea muy fina
+        canvas_obj.line(40, 50, width - 40, 50)
         
-        # Texto de propiedad (Gris claro y pequeño)
         canvas_obj.setFont("Helvetica-Oblique", 7)
         canvas_obj.setFillColor(colors.grey)
-        canvas_obj.drawString(40, 38, "Este informe técnico es propiedad de MOTOTECH. Registro digital protegido.")
+        canvas_obj.drawString(40, 38, "Este archivo es propiedad de MOTOTECH. Prohibida su alteración.")
         
-        # Mensaje de agradecimiento (Limpio y centrado)
         canvas_obj.setFont("Helvetica-Bold", 10)
-        canvas_obj.setFillColor(colors.HexColor("#1B2631")) # El azul oscuro de tu marca
-        canvas_obj.drawCentredString(width / 2, 25, "¡Gracias por elegir a MOTOTECH para cuidar tu pasión!")
+        canvas_obj.setFillColor(colors.HexColor("#1B2631"))
+        canvas_obj.drawCentredString(width / 2, 25, "¡Gracias por confiar en MOTOTECH!")
 
-    # No olvides llamar a la función antes del save
+    # Asegúrate de que estas dos líneas estén al final de generar_pdf
     dibujar_pie_pagina(c)
     
-
     # --- CIERRE FINAL ---
     
 
