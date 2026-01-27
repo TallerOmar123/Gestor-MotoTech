@@ -668,12 +668,13 @@ def generar_pdf(placa):
     c.setFont("Helvetica-Bold", 10)
     c.drawString(50, y, f"VALOR TOTAL: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- REUBICACIÓN: INVENTARIO DE RECEPCIÓN (Aquí abajo no estorba) ---
+    # --- REUBICACIÓN: INVENTARIO DE RECEPCIÓN ---
     y -= 40
     c.setStrokeColor(colors.HexColor("#1B2631"))
     c.rect(40, y - 45, 520, 50, fill=0) # Cuadro del inventario
     
     c.setFont("Helvetica-Bold", 9)
+    # CAMBIO AQUÍ: Usamos 'y' en lugar de 'y_inv'
     c.drawString(50, y - 12, "INVENTARIO DE RECEPCIÓN (REGISTRO DE INGRESO):")
     
     c.setFont("Helvetica", 8)
@@ -688,7 +689,7 @@ def generar_pdf(placa):
     c.drawString(60, y - 27, detalles_inv)
     c.drawString(60, y - 39, f"Nivel de Combustible: {gas}")
     
-    # Actualizamos 'y' para lo que siga (fotos)
+    # Bajamos el margen para lo que sigue
     y -= 70
 
     # --- BLOQUE DE FOTOS DIFERENCIADO ---
