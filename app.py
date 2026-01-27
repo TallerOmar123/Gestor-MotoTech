@@ -560,6 +560,7 @@ def generar_pdf(placa):
 
     c = canvas.Canvas(ruta_pdf, pagesize=letter)
     width, height = letter
+    fecha_hoy = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # --- BRANDING Y ENCABEZADO ---
     c.setFillColor(colors.HexColor("#1B2631"))
@@ -600,7 +601,7 @@ def generar_pdf(placa):
     c.drawString(60, y_inv - 39, f"Nivel de Combustible: {gas}")
 
     # Ajustamos el inicio de la tabla de diagnósticos para que no choque
-    y = height - 210
+    y = height - 240
 
     # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
@@ -658,66 +659,73 @@ def generar_pdf(placa):
         c.drawCentredString(460, y, texto_prioridad)
         y -= 20
 
-    # --- OBSERVACIONES Y LIQUIDACIÓN ---
+    # --- SUB-BLOQUE: OBSERVACIONES Y LIQUIDACIÓN ---
     y -= 30
     c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, y, "LIQUIDACIÓN Y NOTAS:")
-    c.setFont("Helvetica", 9)
+    c.drawString(40, y, "DETALLE DE REPUESTOS Y MANO DE OBRA:")
     y -= 20
-    c.drawString(40, y, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
+    
+    # Dibujamos el detalle manual de repuestos
+    c.setFont("Helvetica", 9)
+    detalle_rep = moto.get('detalle_repuestos', 'No hay repuestos registrados')
+    
+    # Si el texto es muy largo, lo limitamos o podrías usar un split simple
+    c.drawString(50, y, f"- {detalle_rep}")
+    y -= 20
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(50, y, f"VALOR TOTAL: $ {moto.get('valor_total_repuestos', '0')}")
 
-    # --- BLOQUE DE FOTOS OPTIMIZADAS ---
-    todas_las_fotos = []
-    foto_p = moto.get('foto_factura') or moto.get('foto_soporte')
-    if foto_p: todas_las_fotos.append(foto_p)
+    # --- BLOQUE DE FOTOS DIFERENCIADO ---
+    # 1. Foto Soporte / Factura (Página independiente o al inicio)
+    foto_soporte = moto.get('foto_factura') or moto.get('foto_soporte')
+    
+    if foto_soporte:
+        c.showPage()
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(40, height - 50, "SOPORTE DE FACTURACIÓN / INGRESO")
+        
+        try:
+            link_s = str(foto_soporte).strip().replace("/upload/", "/upload/w_600,q_auto/")
+            resp_s = requests.get(link_s, timeout=10)
+            img_s = ImageReader(BytesIO(resp_s.content))
+            # Dibujamos la factura grande en la parte superior
+            c.drawImage(img_s, 50, height - 400, width=500, height=330, preserveAspectRatio=True)
+        except:
+            c.drawString(40, height - 80, "⚠️ No se pudo cargar la imagen de soporte.")
 
+    # 2. Fotos de Mantenimiento (Con numeración Evidencia #1, #2...)
     mantes = moto.get('Mantenimientos') or []
     if mantes:
         ultimo = mantes[-1]
-        v_fotos = ultimo.get('Fotos') or ultimo.get('fotos')
-        if isinstance(v_fotos, list): todas_las_fotos.extend(v_fotos)
-        elif v_fotos: todas_las_fotos.append(v_fotos)
+        fotos_mante = ultimo.get('Fotos') or ultimo.get('fotos') or []
+        if isinstance(fotos_mante, str): fotos_mante = [fotos_mante]
 
-    if todas_las_fotos:
-        c.showPage()
-        y_f = height - 50
-        c.setFont("Helvetica-Bold", 14)
-        c.drawString(40, y_f, "ANEXO FOTOGRÁFICO")
-        y_f -= 50
+        if fotos_mante:
+            c.showPage()
+            y_f = height - 50
+            c.setFont("Helvetica-Bold", 14)
+            c.drawString(40, y_f, "EVIDENCIAS DEL MANTENIMIENTO")
+            y_f -= 50
 
-        for idx, url in enumerate(todas_las_fotos):
-            try:
-                link = str(url).strip()
-                if not link.startswith('http'): continue
-                
-                # Transformación de Cloudinary para velocidad
-                link_veloz = link.replace("/upload/", "/upload/w_600,c_limit,q_auto,f_jpg/")
-                resp = requests.get(link_veloz, timeout=10)
-                img_raw = Image.open(BytesIO(resp.content))
-
-                # Auto-rotación
+            for idx, url in enumerate(fotos_mante):
                 try:
-                    for orientation in ExifTags.TAGS.keys():
-                        if ExifTags.TAGS[orientation] == 'Orientation': break
-                    exif = dict(img_raw._getexif().items())
-                    if exif[orientation] == 3: img_raw = img_raw.rotate(180, expand=True)
-                    elif exif[orientation] == 6: img_raw = img_raw.rotate(270, expand=True)
-                    elif exif[orientation] == 8: img_raw = img_raw.rotate(90, expand=True)
-                except: pass
-
-                img_raw.thumbnail((800, 800), Image.Resampling.LANCZOS)
-                img_buf = BytesIO()
-                if img_raw.mode in ("RGBA", "P"): img_raw = img_raw.convert("RGB")
-                img_raw.save(img_buf, format="JPEG", quality=55)
-
-                if y_f < 300:
-                    c.showPage()
-                    y_f = height - 60
-                
-                y_f -= 280
-                c.drawImage(ImageReader(img_buf), 50, y_f, width=500, height=280, preserveAspectRatio=True)
-                y_f -= 40
-            except: continue
+                    # Aplicamos numeración dinámica: Evidencia #1, #2...
+                    if y_f < 300:
+                        c.showPage()
+                        y_f = height - 60
+                    
+                    link_v = str(url).strip().replace("/upload/", "/upload/w_600,q_auto/")
+                    resp_v = requests.get(link_v, timeout=10)
+                    img_v = ImageReader(BytesIO(resp_v.content))
+                    
+                    y_f -= 280
+                    c.drawImage(img_v, 50, y_f, width=500, height=280, preserveAspectRatio=True)
+                    
+                    # Etiqueta de Evidencia
+                    c.setFont("Helvetica-Bold", 10)
+                    c.drawString(50, y_f - 15, f"EVIDENCIA #{idx + 1}")
+                    y_f -= 45
+                except: continue
 
     c.save()
     
