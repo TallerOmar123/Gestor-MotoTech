@@ -542,27 +542,24 @@ def enviar_whatsapp(placa):
 
 @app.route('/generar_pdf/<placa>')
 def generar_pdf(placa):
-    """Dibuja el reporte técnico profesional con nombres dinámicos para evitar caché en móviles."""
+    """Genera el reporte completo con diagnóstico técnico y fotos optimizadas."""
     registros = cargar_registros()
     moto = next((m for m in registros if m.get('placa') == placa), None)
 
     if not moto:
         return "Error: Identificador de vehículo no localizado", 404
 
-    # --- 1. NOMBRE DINÁMICO (Solución al error del celular) ---
+    # 1. Nombre de archivo único para evitar caché en móviles
     import time
     timestamp = int(time.time())
-    # El nombre cambia cada segundo, así el celular se ve obligado a bajar uno nuevo
     nombre_archivo = f"Reporte_{placa}_{timestamp}.pdf"
     ruta_pdf = os.path.join(os.getcwd(), 'static', nombre_archivo)
     
-    # Asegurar que la carpeta static existe
     if not os.path.exists('static'):
         os.makedirs('static')
 
     c = canvas.Canvas(ruta_pdf, pagesize=letter)
     width, height = letter
-    fecha_hoy = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # --- BRANDING Y ENCABEZADO ---
     c.setFillColor(colors.HexColor("#1B2631"))
@@ -573,60 +570,104 @@ def generar_pdf(placa):
 
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño')}")
-    c.drawString(40, height - 130, f"PLACA: {moto.get('placa')}")
-    c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual')}")
+    c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño', 'N/A')}")
+    c.drawString(40, height - 130, f"PLACA: {moto.get('placa', 'N/A')}")
+    c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual', '0')}")
 
-    # --- MATRIZ DE DIAGNÓSTICO (Resumida para el ejemplo) ---
+    # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
-    # ... (Aquí va todo tu código de la tabla de frenos, motor, etc. que ya tienes) ...
-    # (Para no alargar la respuesta, asumimos que sigue igual hasta llegar a las fotos)
+    items = [
+        ("--- SISTEMA DE FRENOS ---", ""),
+        ("Freno Delantero", moto.get('freno_del')),
+        ("Freno Trasero", moto.get('freno_tras')),
+        ("Líquido / Caliper", moto.get('liq_frenos')),
+        ("--- MOTOR Y SINCRONIZACIÓN ---", ""),
+        ("Aceite Motor", moto.get('estado_aceite')),
+        ("Lavado Carburador", moto.get('lavado_carburador')),
+        ("Filtro Aire / Bujía", moto.get('filtro_bujia')),
+        ("--- CHASIS Y CONTROL ---", ""),
+        ("Aceite Barras", moto.get('estado_barras')),
+        ("Engrase Tijera", moto.get('engrase_tijera')),
+        ("Mantenimiento Guayas", moto.get('mantenimiento_guayas')),
+        ("Sistema Eléctrico", moto.get('estado_electrico'))
+    ]
 
-    # ==========================================================
-    # --- BLOQUE DE FOTOS CON OPTIMIZACIÓN "LINK VELOZ" ---
-    # ==========================================================
+    for nombre, estado in items:
+        if y < 100: # Salto de página si se acaba el espacio
+            c.showPage()
+            y = height - 50
+
+        if "---" in nombre:
+            y -= 10
+            c.setFillColor(colors.HexColor("#D5D8DC"))
+            c.rect(40, y-5, 520, 15, fill=1)
+            c.setFillColor(colors.black)
+            c.setFont("Helvetica-Bold", 9)
+            c.drawString(50, y, nombre)
+            y -= 20
+            continue
+
+        c.setFillColor(colors.black)
+        c.setFont("Helvetica", 10)
+        c.drawString(50, y, nombre)
+
+        # Semáforo de Colores
+        color_celda = colors.white
+        texto_prioridad = "S.D"
+        if estado == "✅ Óptimo":
+            color_celda = colors.lightgreen
+            texto_prioridad = "OK - OPTIMO"
+        elif estado == "⚠️ Pronto Cambio":
+            color_celda = colors.yellow
+            texto_prioridad = "SEGUIMIENTO"
+        elif estado == "🚨 Urgente":
+            color_celda = colors.tomato
+            texto_prioridad = "CAMBIO URGENTE"
+
+        c.setFillColor(color_celda)
+        c.rect(400, y-5, 120, 15, fill=1)
+        c.setFillColor(colors.black)
+        c.drawCentredString(460, y, texto_prioridad)
+        y -= 20
+
+    # --- OBSERVACIONES Y LIQUIDACIÓN ---
+    y -= 30
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(40, y, "LIQUIDACIÓN Y NOTAS:")
+    c.setFont("Helvetica", 9)
+    y -= 20
+    c.drawString(40, y, f"Total Repuestos: $ {moto.get('valor_total_repuestos', '0')}")
+
+    # --- BLOQUE DE FOTOS OPTIMIZADAS ---
     todas_las_fotos = []
-    log_debug = []
-
-    # Rastrear fotos
     foto_p = moto.get('foto_factura') or moto.get('foto_soporte')
     if foto_p: todas_las_fotos.append(foto_p)
 
     mantes = moto.get('Mantenimientos') or []
     if mantes:
         ultimo = mantes[-1]
-        valor_fotos = ultimo.get('Fotos') or ultimo.get('fotos')
-        if isinstance(valor_fotos, list):
-            todas_las_fotos.extend([str(u).strip() for u in valor_fotos if u])
-        elif isinstance(valor_fotos, str):
-            todas_las_fotos.append(valor_fotos.strip())
+        v_fotos = ultimo.get('Fotos') or ultimo.get('fotos')
+        if isinstance(v_fotos, list): todas_las_fotos.extend(v_fotos)
+        elif v_fotos: todas_las_fotos.append(v_fotos)
 
     if todas_las_fotos:
         c.showPage()
         y_f = height - 50
         c.setFont("Helvetica-Bold", 14)
-        c.drawString(40, y_f, "ANEXO FOTOGRÁFICO Y DIAGNÓSTICO")
+        c.drawString(40, y_f, "ANEXO FOTOGRÁFICO")
         y_f -= 50
 
         for idx, url in enumerate(todas_las_fotos):
             try:
                 link = str(url).strip()
                 if not link.startswith('http'): continue
-
-                # --- TRUCO CLOUDINARY VELOZ (Súper importante para móviles) ---
-                # Esto le pide a Cloudinary la foto ya optimizada para no pesar el PDF
-                link_veloz = link.replace("/upload/", "/upload/w_600,c_limit,q_auto,f_jpg/")
-                # Anti-caché para cada imagen
-                link_anti_cache = f"{link_veloz}?v={timestamp}"
-
-                if y_f < 300:
-                    c.showPage()
-                    y_f = height - 60
                 
-                resp = requests.get(link_anti_cache, timeout=10)
+                # Transformación de Cloudinary para velocidad
+                link_veloz = link.replace("/upload/", "/upload/w_600,c_limit,q_auto,f_jpg/")
+                resp = requests.get(link_veloz, timeout=10)
                 img_raw = Image.open(BytesIO(resp.content))
 
-                # Auto-Rotación EXIF
+                # Auto-rotación
                 try:
                     for orientation in ExifTags.TAGS.keys():
                         if ExifTags.TAGS[orientation] == 'Orientation': break
@@ -636,31 +677,25 @@ def generar_pdf(placa):
                     elif exif[orientation] == 8: img_raw = img_raw.rotate(90, expand=True)
                 except: pass
 
-                # Redimensión y Compresión Final
                 img_raw.thumbnail((800, 800), Image.Resampling.LANCZOS)
-                img_buffer = BytesIO()
+                img_buf = BytesIO()
                 if img_raw.mode in ("RGBA", "P"): img_raw = img_raw.convert("RGB")
-                img_raw.save(img_buffer, format="JPEG", quality=50, optimize=True)
-                
-                # Dibujar
-                y_f -= 280
-                c.drawImage(ImageReader(img_buffer), 50, y_f, width=500, height=280, preserveAspectRatio=True)
-                c.setFont("Helvetica-Oblique", 7)
-                c.drawString(50, y_f - 12, f"Evidencia #{idx+1} - Sincronizada correctamente")
-                y_f -= 40 
-                
-            except Exception as e:
-                y_f -= 20
-                c.drawString(40, y_f, f"⚠️ Error en foto {idx+1}")
+                img_raw.save(img_buf, format="JPEG", quality=55)
 
-    # --- CIERRE FINAL CON CABECERAS ANTI-CACHÉ ---
+                if y_f < 300:
+                    c.showPage()
+                    y_f = height - 60
+                
+                y_f -= 280
+                c.drawImage(ImageReader(img_buf), 50, y_f, width=500, height=280, preserveAspectRatio=True)
+                y_f -= 40
+            except: continue
+
     c.save()
     
+    # Respuesta anti-caché para móviles
     response = send_file(ruta_pdf, as_attachment=True)
-    # Estas 3 líneas obligan al celular a borrar lo viejo y mostrar lo nuevo
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
     return response
 
 
