@@ -601,7 +601,7 @@ def generar_pdf(placa):
     c.drawString(60, y_inv - 39, f"Nivel de Combustible: {gas}")
 
     # Ajustamos el inicio de la tabla de diagnósticos para que no choque
-    y = height - 240
+    y = height - 260
 
     # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
@@ -726,6 +726,37 @@ def generar_pdf(placa):
                     c.drawString(50, y_f - 15, f"EVIDENCIA #{idx + 1}")
                     y_f -= 45
                 except: continue
+
+
+                # --- PIE DE PÁGINA PROFESIONAL (BRANDING FINAL) ---
+    def dibujar_pie_pagina(canvas_obj):
+        canvas_obj.setStrokeColor(colors.lightgrey)
+        canvas_obj.line(40, 50, width - 40, 50) # Línea decorativa inferior
+        
+        # Mensaje de Propiedad y Gracias
+        canvas_obj.setFont("Helvetica-Oblique", 8)
+        canvas_obj.setFillColor(colors.grey)
+        canvas_obj.drawString(40, 35, "Este documento es propiedad de MOTOTECH.")
+        
+        canvas_obj.setFont("Helvetica-Bold", 10)
+        canvas_obj.drawCentredString(width / 2, 20, "¡Gracias por confiar en MOTOTECH para el cuidado de tu Moto!")
+
+        # Logo en "Sombrita" (Marca de agua en la esquina inferior derecha)
+        # Nota: Asegúrate de que 'logo.png' exista en tu carpeta raíz o static
+        try:
+            ruta_logo = os.path.join(os.getcwd(), 'static', 'logo.png')
+            canvas_obj.saveState()
+            canvas_obj.setFillAlpha(0.1) # Hace la imagen semitransparente (sombrita)
+            canvas_obj.drawImage(ruta_logo, width - 120, 60, width=80, height=80, mask='auto')
+            canvas_obj.restoreState()
+        except:
+            pass # Si no encuentra el logo, no rompe el PDF
+
+    # Llamamos a la función del pie de página antes de guardar
+    dibujar_pie_pagina(c)
+
+    # --- CIERRE FINAL ---
+    
 
     c.save()
     
