@@ -671,10 +671,10 @@ def generar_pdf(placa):
     # --- REUBICACIÓN: INVENTARIO DE RECEPCIÓN ---
     y -= 40
     c.setStrokeColor(colors.HexColor("#1B2631"))
-    c.rect(40, y - 45, 520, 50, fill=0) # Cuadro del inventario
+    c.rect(40, y - 45, 520, 50, fill=0) # El cuadro ahora usa 'y'
     
     c.setFont("Helvetica-Bold", 9)
-    # CAMBIO AQUÍ: Usamos 'y' en lugar de 'y_inv'
+    # Aquí es donde fallaba: cambiamos y_inv por y
     c.drawString(50, y - 12, "INVENTARIO DE RECEPCIÓN (REGISTRO DE INGRESO):")
     
     c.setFont("Helvetica", 8)
@@ -689,8 +689,7 @@ def generar_pdf(placa):
     c.drawString(60, y - 27, detalles_inv)
     c.drawString(60, y - 39, f"Nivel de Combustible: {gas}")
     
-    # Bajamos el margen para lo que sigue
-    y -= 70
+    y -= 70 # Espacio para lo que sigue (fotos o fin de página)
 
     # --- BLOQUE DE FOTOS DIFERENCIADO ---
     # 1. Foto Soporte / Factura (Página independiente o al inicio)
