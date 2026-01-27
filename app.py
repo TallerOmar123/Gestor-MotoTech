@@ -568,11 +568,39 @@ def generar_pdf(placa):
     c.setFont("Helvetica-Bold", 20)
     c.drawString(40, height - 50, "MOTOTECH - REPORTE TÉCNICO")
 
+   # --- INFORMACIÓN BASE DEL CLIENTE Y VEHÍCULO ---
     c.setFillColor(colors.black)
     c.setFont("Helvetica-Bold", 11)
-    c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño', 'N/A')}")
-    c.drawString(40, height - 130, f"PLACA: {moto.get('placa', 'N/A')}")
+    c.drawString(40, height - 110, f"CLIENTE: {moto.get('dueño', 'N/A').upper()}")
+    c.drawString(40, height - 125, f"PLACA: {moto.get('placa', 'N/A').upper()}")
     c.drawString(350, height - 110, f"KM ACTUAL: {moto.get('km_actual', '0')}")
+    c.drawString(350, height - 125, f"FECHA: {fecha_hoy}")
+
+    # --- MÓDULO DE INVENTARIO DE RECEPCIÓN (NUEVO) ---
+    y_inv = height - 145
+    c.setStrokeColor(colors.HexColor("#1B2631"))
+    c.setLineWidth(1)
+    c.rect(40, y_inv - 45, 520, 50, fill=0) # Cuadro del inventario
+    
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(50, y_inv - 12, "INVENTARIO DE RECEPCIÓN (ESTADO DE ENTREGA):")
+    
+    c.setFont("Helvetica", 8)
+    inv = moto.get('inventario', {})
+    gas = moto.get('gasolina', 'No registrada')
+    
+    # Organizamos los ítems en una sola línea para ahorrar espacio
+    detalles_inv = (
+        f"Espejos: {inv.get('espejos', 'N/A')}  |  "
+        f"Direccionales: {inv.get('direccionales', 'N/A')}  |  "
+        f"Luces: {inv.get('luces', 'N/A')}  |  "
+        f"Maletero: {inv.get('maletero', 'N/A')}"
+    )
+    c.drawString(60, y_inv - 27, detalles_inv)
+    c.drawString(60, y_inv - 39, f"Nivel de Combustible: {gas}")
+
+    # Ajustamos el inicio de la tabla de diagnósticos para que no choque
+    y = height - 210
 
     # --- MATRIZ DE DIAGNÓSTICO (RESTABLECIDA) ---
     y = height - 170
