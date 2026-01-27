@@ -744,7 +744,7 @@ def generar_pdf(placa):
                 except: continue
 
 
-                # --- PIE DE PÁGINA Y LOGO FINAL ---
+    # --- PIE DE PÁGINA Y LOGO FINAL ---
     def dibujar_pie_pagina(canvas_obj):
         # --- MARCA DE AGUA (Subida y con más tinta) ---
         try:
@@ -774,7 +774,7 @@ def generar_pdf(placa):
         canvas_obj.setFillColor(colors.HexColor("#1B2631"))
         canvas_obj.drawCentredString(width / 2, 25, "¡Gracias por confiar en MOTOTECH!")
 
-    # Asegúrate de que estas dos líneas estén al final de generar_pdf
+    # ESTA LÍNEA ES LA QUE EJECUTA TODO (Debe estar alineada con el 'def' de arriba)
     dibujar_pie_pagina(c)
     
     # --- CIERRE FINAL ---
